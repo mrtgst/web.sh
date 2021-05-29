@@ -32,14 +32,24 @@ echo "\
 " > index.html
 }
 
+help () {
+	echo "Available commands:
+	-- init
+	-- run"
+}
+
 case $1 in
 	--init)
 		init
 		source_metadata
+		exit 1
 		;;
 	--run)
 		source_metadata
 		run
+		exit 1
 		;;
 	*)
+		help
+		exit 1;;	
 esac
