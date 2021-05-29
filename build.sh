@@ -6,6 +6,7 @@ init () {
 	printf "# these variables contain the site metadata
 # edit them to fit your site\n
 TITLE='website title'
+FIGLET_TITLE_TEXT='website title'
 " > ./content/metadata
 }
 
@@ -14,28 +15,33 @@ source_metadata () {
 	. ./content/metadata
 }
 
+
+add_figlet () {
+	echo "<pre>" >> $1
+	figlet -f smkeyboard -w 1080 "${FIGLET_TITLE_TEXT}" >> $1
+	echo '</pre>' >> $1
+}
+
+
+
 run () {
 echo "\
 <html>
 <head>
 <title>${TITLE}</title>
 </head>
-<body>
-<pre>
- _________ ____ ____ ____ ____ ____ ____ ____ ____ ____ ____ _________
-||       |||m |||a |||. |||r |||t |||i |||n |||. |||s |||h |||       ||
-||_______|||__|||__|||__|||__|||__|||__|||__|||__|||__|||__|||_______||
-|/_______\|/__\|/__\|/__\|/__\|/__\|/__\|/__\|/__\|/__\|/__\|/_______\|
-</pre>
+<body>" > index.html
+add_figlet 'index.html'
+echo "\
 </body>
 </html>\
-" > index.html
+" >> index.html
 }
 
 help () {
 	echo "Available commands:
-	-- init
-	-- run"
+	--init
+	--run"
 }
 
 case $1 in
