@@ -24,7 +24,7 @@ add_figlet () {
 
 
 
-run () {
+make_index () {
 echo "\
 <html>
 <head>
@@ -52,7 +52,7 @@ case $1 in
 		;;
 	--run)
 		source_metadata
-		run
+		make_index
 		exit 1
 		;;
 	*)
