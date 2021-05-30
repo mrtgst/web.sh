@@ -1,22 +1,23 @@
 #!/bin/sh
 TARGET_DIR=$2
 CURRENT_YEAR=$(date +"%Y")
+CURRENT_DATE=$(date +"%Y-%m-%d")
 init () {
 	if ! [ -d ${TARGET_DIR}/content ]; then mkdir -p ${TARGET_DIR}/content; fi
-	if ! [ -d ${TARGET_DIR}/content/blog ]; then mkdir -p ${TARGET_DIR}/content/blog; fi
+	if ! [ -d ${TARGET_DIR}/blog ]; then mkdir -p ${TARGET_DIR}/blog; fi
+    printf "# Blog title\nSome blog text." > ${TARGET_DIR}/blog/${CURRENT_DATE}_blog-title.md
 	echo "" > ${TARGET_DIR}/content/blank_text
-	echo "" > ${TARGET_DIR}/content/index_text
-	echo "" > ${TARGET_DIR}/content/about_text
-	echo "" > ${TARGET_DIR}/content/blog_text
+	echo "Welcome to ${0}" > ${TARGET_DIR}/content/index_text
+	echo "Something about ${0}" > ${TARGET_DIR}/content/about_text
 	printf "# these variables contain the site metadata
 # edit them to fit your site\n
-TITLE='website title'
-FIGLET_TITLE_TEXT='website title'
+TITLE=%s
+FIGLET_TITLE_TEXT=%s
 # available figlet fonts: 
 # banner, block, digital, lean, mnemonic, shadow, small, smshadow, standard,
 # big, bubble, ivrit, mini, script, slant, smscript, smslant, term
 FIGLET_FONT='small'
-" > ${TARGET_DIR}/content/metadata
+" ${0} ${0} > ${TARGET_DIR}/content/metadata
 cp ./style.css ${TARGET_DIR}
 echo "Created ${TARGET_DIR}/content folder with template files."
 }
@@ -118,16 +119,17 @@ printf "\
 }
 
 build_blog_posts () {
-POSTS=$(ls ${TARGET_DIR}/content/blog/*.md)
+POSTS=$(ls ${TARGET_DIR}/blog/*.md)
 for i in ${POSTS}; do
     j=${i%.*} # remove .md
     pandoc $i --from markdown --to html --output $j.tmp
-    build_blog $j.html $j.tmp 
+    build_blog_page $j.html $j.tmp 
     rm -f $j.tmp
 done
+cp $j.html ${TARGET_DIR}/blog.html
 }
 
-build_blog () {
+build_blog_page () {
 BUILD_TARGET=${1}
 BUILD_SOURCE=${2}
 
@@ -144,6 +146,7 @@ Posts
 </div>
 <div class="column middle">\n'\
 >> "${BUILD_TARGET}" 
+
 
 if [ -e ${BUILD_SOURCE} ]; then
 	cat "${BUILD_SOURCE}" >> "${BUILD_TARGET}"
