@@ -8,6 +8,10 @@ init () {
 # edit them to fit your site\n
 TITLE='website title'
 FIGLET_TITLE_TEXT='website title'
+# available figlet fonts: 
+# banner, block, digital, lean, mnemonic, shadow, small, smshadow, standard,
+# big, bubble, ivrit, mini, script, slant, smscript, smslant, term
+FIGLET_FONT='small'
 " > ./content/metadata
 }
 
@@ -19,7 +23,7 @@ source_metadata () {
 
 add_figlet () {
 	printf "<pre>\n" >> $1
-	figlet -f smkeyboard -w 1080 "${FIGLET_TITLE_TEXT}" >> $1
+	figlet -f small -w 1080 "${FIGLET_TITLE_TEXT}" >> $1
 	printf '</pre>\n' >> $1
 }
 
@@ -55,6 +59,7 @@ printf "\
 <body>
 <header>\n"\
 > index.html
+
 
 add_figlet index.html
 

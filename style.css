@@ -16,6 +16,11 @@ body {
   font-size: 1em;
 }
 
+pre {
+  font-family: monospace;
+  font-size: 1em;
+}
+
 a {
   text-decoration: none;
   color: black;
@@ -34,7 +39,7 @@ header {
   padding-bottom: 30px;
   text-align: center;
   font-style: bold;
-  font-size: 2em;
+  font-size: 1em;
 }
 
 footer {
