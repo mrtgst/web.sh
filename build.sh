@@ -1,12 +1,12 @@
 #!/bin/sh
 # builds the website by importing from the content folder
-
+TARGET_DIR=$2
 CURRENT_YEAR=$(date +"%Y")
 init () {
-	if ! [ -d ./content ]; then mkdir ./content; fi
-	echo "" > ./content/blank_text
-	echo "" > ./content/index_text
-	echo "" > ./content/about_text
+	if ! [ -d ${TARGET_DIR}/content ]; then mkdir -p ${TARGET_DIR}/content; fi
+	echo "" > ${TARGET_DIR}/content/blank_text
+	echo "" > ${TARGET_DIR}/content/index_text
+	echo "" > ${TARGET_DIR}/content/about_text
 	printf "# these variables contain the site metadata
 # edit them to fit your site\n
 TITLE='website title'
@@ -15,13 +15,14 @@ FIGLET_TITLE_TEXT='website title'
 # banner, block, digital, lean, mnemonic, shadow, small, smshadow, standard,
 # big, bubble, ivrit, mini, script, slant, smscript, smslant, term
 FIGLET_FONT='small'
-" > ./content/metadata
-echo "Created ./content folder with template files."
+" > ${TARGET_DIR}/content/metadata
+cp ./style.css ${TARGET_DIR}
+echo "Created ${TARGET_DIR}/content folder with template files."
 }
 
 source_metadata () {
 	# source metadata file
-	. ./content/metadata
+	. ${TARGET_DIR}/content/metadata
 }
 
 
@@ -79,7 +80,12 @@ add_navbar $1
 
 
 build_page () {
-add_header "${1}.html" 
+TARGET_FILE=${1}
+SOURCE_FILE=${2}
+BUILD_TARGET=${TARGET_DIR}/${TARGET_FILE}
+BUILD_SOURCE=${TARGET_DIR}/content/${SOURCE_FILE}
+
+add_header ${BUILD_TARGET}
 
 printf '
 <div class="row">
@@ -87,11 +93,10 @@ printf '
 <!-- left-hand column -->
 </div>
 <div class="column middle">\n'\
->> "${1}.html" 
+>> "${BUILD_TARGET}" 
 
-FILE="./content/${2}"
-if [ -e $FILE ]; then
-	cat "$FILE" >> "${1}.html"
+if [ -e ${BUILD_SOURCE} ]; then
+	cat "${BUILD_SOURCE}" >> "${BUILD_TARGET}"
 fi
 
 printf '
@@ -100,21 +105,21 @@ printf '
 <!-- right-hand column -->
 </div>
 </div> <!-- end row div -->\n'\
->> "${1}.html" 
+>> "${BUILD_TARGET}"
 
-add_footer "${1}.html"
+add_footer "${BUILD_TARGET}"
 
 printf "\
 </body>
 </html>\
-" >> "${1}.html"
+" >> "${BUILD_TARGET}"
 
 }
 
 help () {
 	echo "Available commands:
-	--init
-	--run"
+	--init destination 
+	--run destination"
 }
 
 case $1 in
@@ -125,12 +130,13 @@ case $1 in
 		;;
 	--run)
 		source_metadata
-		build_page index index_text
-		build_page about about_text 
-		build_page blog blank_text 
+		build_page index.html index_text
+		build_page about.html about_text 
+		build_page blog.html blank_text 
 		exit 1
 		;;
 	*)
 		help
-		exit 1;;	
+		exit 1
+		;;
 esac
