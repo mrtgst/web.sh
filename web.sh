@@ -1,5 +1,4 @@
 #!/bin/sh
-# builds the website by importing from the content folder
 TARGET_DIR=$2
 CURRENT_YEAR=$(date +"%Y")
 init () {
@@ -27,26 +26,26 @@ source_metadata () {
 
 
 add_figlet () {
-	printf "<pre>\n" >> $1
-	figlet -f small -w 1080 "${FIGLET_TITLE_TEXT}" >> $1
+	printf "<pre>\n" >> "$1"
+	figlet -f small -w 1080 "${FIGLET_TITLE_TEXT}" >> "$1"
 	printf '</pre>\n' >> $1
 }
 
 
 add_navbar () {
-printf "\
+printf '\
 <div class="navbar">
 <ul>
 	<li display="inline"><a href="blog.html">blog</a></li>
 	<li display="inline"><a href="about.html">about</a></li>
 </ul>
-</div>\n" >> $1 
+</div>\n' >> ${1} 
 }
 
 add_footer () {
 printf '
 <footer>
-	&copy; %s<br>No scripts, no cookies.
+	Copyright %s<br>Built with <a href=''>webwind</a>. No scripts, no cookies.
 </footer>\n' ${CURRENT_YEAR}\
 >> $1
 }
@@ -69,7 +68,7 @@ echo '<div class=banner>' >> $1
 echo '<a href=index.html>' >> $1
 add_figlet $1 
 echo '</a>' >> $1
-echo '</div>' >> $1
+echo '</div>' >> "$1"
 
 printf "\
 </header>\n"\
@@ -117,9 +116,9 @@ printf "\
 }
 
 help () {
-	echo "Available commands:
+	echo "web.sh $VERSION. Available commands:
 	--init destination 
-	--run destination"
+	--build destination"
 }
 
 case $1 in
@@ -128,7 +127,7 @@ case $1 in
 		source_metadata
 		exit 1
 		;;
-	--run)
+	--build)
 		source_metadata
 		build_page index.html index_text
 		build_page about.html about_text 
