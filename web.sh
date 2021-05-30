@@ -33,19 +33,21 @@ add_figlet () {
 
 
 add_navbar () {
-printf '\
+printf "\
 <div class="navbar">
 <ul>
 	<li display="inline"><a href="blog.html">blog</a></li>
 	<li display="inline"><a href="about.html">about</a></li>
 </ul>
-</div>\n' >> ${1} 
+</div>\n" >> ${1} 
 }
 
 add_footer () {
 printf '
 <footer>
-	Copyright %s<br>Built with <a href='https://github.com/mrtgst/web.sh'>web.sh</a>. No scripts, no cookies.
+	Copyright %s<br>
+    Built with <a href='https://github.com/mrtgst/web.sh'>web.sh</a><br>
+    No scripts, no cookies
 </footer>\n' ${CURRENT_YEAR}\
 >> $1
 }
@@ -70,8 +72,8 @@ add_figlet $1
 echo '</a>' >> $1
 echo '</div>' >> "$1"
 
-printf "\
-</header>\n"\
+printf '
+</header>\n'\
 >> $1 
 
 add_navbar $1
