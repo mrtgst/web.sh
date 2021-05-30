@@ -4,6 +4,9 @@
 CURRENT_YEAR=$(date +"%Y")
 init () {
 	if ! [ -d ./content ]; then mkdir ./content; fi
+	echo "" > ./content/blank_text
+	echo "" > ./content/index_text
+	echo "" > ./content/about_text
 	printf "# these variables contain the site metadata
 # edit them to fit your site\n
 TITLE='website title'
@@ -82,7 +85,15 @@ printf '
 <div class="column side">
 <!-- left-hand column -->
 </div>
-<div class="column middle">
+<div class="column middle">\n'\
+>> "${1}.html" 
+
+FILE="./content/${2}"
+if [ -e $FILE ]; then
+	cat "$FILE" >> "${1}.html"
+fi
+
+printf '
 </div>
 <div class="column side">
 <!-- right-hand column -->
@@ -113,9 +124,9 @@ case $1 in
 		;;
 	--run)
 		source_metadata
-		build_page index
-		build_page about
-		build_page blog 
+		build_page index index_text
+		build_page about about_text 
+		build_page blog blank_text 
 		exit 1
 		;;
 	*)
