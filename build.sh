@@ -60,7 +60,11 @@ printf "\
 <header>\n"\
 > $1
 
+echo '<div class=banner>' >> $1
+echo '<a href=index.html>' >> $1
 add_figlet $1 
+echo '</a>' >> $1
+echo '</div>' >> $1
 
 printf "\
 </header>\n"\
@@ -111,6 +115,7 @@ case $1 in
 		source_metadata
 		build_page index
 		build_page about
+		build_page blog 
 		exit 1
 		;;
 	*)
