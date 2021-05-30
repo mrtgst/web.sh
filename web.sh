@@ -45,7 +45,7 @@ printf "\
 add_footer () {
 printf '
 <footer>
-	Copyright %s<br>
+	&copy; %s<br>
     Built with <a href='https://github.com/mrtgst/web.sh'>web.sh</a><br>
     No scripts, no cookies
 </footer>\n' ${CURRENT_YEAR}\
