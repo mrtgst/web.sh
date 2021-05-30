@@ -3,9 +3,11 @@ TARGET_DIR=$2
 CURRENT_YEAR=$(date +"%Y")
 init () {
 	if ! [ -d ${TARGET_DIR}/content ]; then mkdir -p ${TARGET_DIR}/content; fi
+	if ! [ -d ${TARGET_DIR}/content/blog ]; then mkdir -p ${TARGET_DIR}/content/blog; fi
 	echo "" > ${TARGET_DIR}/content/blank_text
 	echo "" > ${TARGET_DIR}/content/index_text
 	echo "" > ${TARGET_DIR}/content/about_text
+	echo "" > ${TARGET_DIR}/content/blog_text
 	printf "# these variables contain the site metadata
 # edit them to fit your site\n
 TITLE='website title'
@@ -91,7 +93,6 @@ add_header ${BUILD_TARGET}
 printf '
 <div class="row">
 <div class="column side">
-<!-- left-hand column -->
 </div>
 <div class="column middle">\n'\
 >> "${BUILD_TARGET}" 
@@ -103,9 +104,8 @@ fi
 printf '
 </div>
 <div class="column side">
-<!-- right-hand column -->
 </div>
-</div> <!-- end row div -->\n'\
+</div>\n'\
 >> "${BUILD_TARGET}"
 
 add_footer "${BUILD_TARGET}"
@@ -115,6 +115,53 @@ printf "\
 </html>\
 " >> "${BUILD_TARGET}"
 
+}
+
+build_blog_posts () {
+POSTS=$(ls ${TARGET_DIR}/content/blog/*.md)
+for i in ${POSTS}; do
+    j=${i%.*} # remove .md
+    pandoc $i --from markdown --to html --output $j.tmp
+    build_blog $j.html $j.tmp 
+    rm -f $j.tmp
+done
+}
+
+build_blog () {
+BUILD_TARGET=${1}
+BUILD_SOURCE=${2}
+
+add_header ${BUILD_TARGET}
+
+printf '
+<div class="row">
+<div class="column side">
+Posts
+<ul>
+	<li display="inline"><a href="1.html">2021-05-30</a></li>
+	<li display="inline"><a href="2.html">2021-05-29</a></li>
+</ul>
+</div>
+<div class="column middle">\n'\
+>> "${BUILD_TARGET}" 
+
+if [ -e ${BUILD_SOURCE} ]; then
+	cat "${BUILD_SOURCE}" >> "${BUILD_TARGET}"
+fi
+
+printf '
+</div>
+<div class="column side">
+</div>
+</div>\n'\
+>> "${BUILD_TARGET}"
+
+add_footer "${BUILD_TARGET}"
+
+printf "\
+</body>
+</html>\
+" >> "${BUILD_TARGET}"
 }
 
 help () {
@@ -133,7 +180,7 @@ case $1 in
 		source_metadata
 		build_page index.html index_text
 		build_page about.html about_text 
-		build_page blog.html blank_text 
+        build_blog_posts
 		exit 1
 		;;
 	*)

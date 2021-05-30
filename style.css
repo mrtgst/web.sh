@@ -48,6 +48,8 @@ footer {
   /* margin-top: 300px; */
   font-size: 0.8em;
   font-family: monospace;
+   padding-top: 30px;
+   padding-bottom: 30px;
 }
 
 .banner a {
@@ -82,7 +84,7 @@ footer {
 
 /* Create three unequal columns that float next to each other */
 .column {
-  float: left;
+  float: right;
   padding: 10px;
 }
 
@@ -94,7 +96,7 @@ footer {
 /* Middle column */
 .column.middle {
   width: 50%;
-  padding-bottom: 100px;
+  padding-bottom: 30px;
 }
 
 /* Clear floats after the columns */
