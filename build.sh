@@ -46,7 +46,7 @@ printf '
 >> $1
 }
 
-make_index () {
+add_header () {
 printf "\
 <!doctype html>
 <html lang="en">
@@ -58,16 +58,20 @@ printf "\
 </head>
 <body>
 <header>\n"\
-> index.html
+> $1
 
-
-add_figlet index.html
+add_figlet $1 
 
 printf "\
 </header>\n"\
->> index.html
+>> $1 
 
-add_navbar index.html
+add_navbar $1
+}
+
+
+build_page () {
+add_header "${1}.html" 
 
 printf '
 <div class="row">
@@ -80,14 +84,15 @@ printf '
 <!-- right-hand column -->
 </div>
 </div> <!-- end row div -->\n'\
->> index.html
+>> "${1}.html" 
 
-add_footer index.html
+add_footer "${1}.html"
 
 printf "\
 </body>
 </html>\
-" >> index.html
+" >> "${1}.html"
+
 }
 
 help () {
@@ -104,7 +109,8 @@ case $1 in
 		;;
 	--run)
 		source_metadata
-		make_index
+		build_page index
+		build_page about
 		exit 1
 		;;
 	*)
