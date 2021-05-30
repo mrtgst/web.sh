@@ -16,6 +16,7 @@ FIGLET_TITLE_TEXT='website title'
 # big, bubble, ivrit, mini, script, slant, smscript, smslant, term
 FIGLET_FONT='small'
 " > ./content/metadata
+echo "Created ./content folder with template files.'
 }
 
 source_metadata () {
