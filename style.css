@@ -1,0 +1,101 @@
+.serif {
+  font-family: "Times New Roman", Times, serif;
+}
+.sansserif {
+  font-family: Arial, Helvetica, sans-serif;
+}
+.monospace {
+  font-family: "Consolas", "Roboto Mono", "Ubuntu Mono", monospace;
+}
+
+body {
+  margin: 0;
+  background-color: white;
+  font-family: monospace;
+  color: black;
+  font-size: 1em;
+}
+
+a {
+  text-decoration: none;
+  color: black;
+}
+a:visited {
+  text-decoration: none;
+  color: black;
+}
+a:hover {
+  background-color: #000000; 
+  color: #ffffff;
+}
+
+header {
+  padding-top: 30px;
+  padding-bottom: 30px;
+  text-align: center;
+  font-style: bold;
+  font-size: 2em;
+}
+
+footer {
+  text-align: center;
+  /* background: #f1f1f1; */
+  /* margin-top: 300px; */
+  font-size: 0.8em;
+  font-family: monospace;
+}
+
+.navbar {
+  overflow: hidden;
+  /* background-color: #f1f1f1; */
+  text-align: center;
+}
+
+.navbar a {
+  color: black;
+  padding-left: 30px; 
+  padding-right: 30px; 
+  text-decoration: none;
+  font-size: 1.25em;
+  font-style: normal;
+}
+
+.navbar a:hover {
+  color: #ffffff;	
+}
+
+.navbar li {
+  float: center;
+  display: inline;
+}
+
+
+/* Create three unequal columns that float next to each other */
+.column {
+  float: left;
+  padding: 10px;
+}
+
+/* Left and right column */
+.column.side {
+  width: 25%;
+}
+
+/* Middle column */
+.column.middle {
+  width: 50%;
+}
+
+/* Clear floats after the columns */
+.row:after {
+  content: "";
+  display: table;
+  clear: both;
+}
+
+/* Responsive layout - makes the three columns stack on top of each other instead of next to each other */
+@media screen and (max-width: 600px) {
+  .column.side, .column.middle {
+    width: 100%;
+  }
+}
