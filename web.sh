@@ -1,5 +1,5 @@
 #!/bin/sh
-VERSION=0.1.0
+VERSION=0.1.1
 TARGET_DIR=$2
 CURRENT_YEAR=$(date +"%Y")
 CURRENT_DATE=$(date +"%Y-%m-%d")
@@ -121,7 +121,7 @@ printf "\
 
 }
 
-build_blog_posts () {
+markup_blog_posts () {
 POSTS=$(ls ${TARGET_DIR}/blog/*.md)
 for i in ${POSTS}; do
     j=${i%.*} # remove .md
@@ -132,6 +132,21 @@ done
 cp $j.html ${TARGET_DIR}/blog.html
 }
 
+build_blog_archive () {
+BLOG_DIR="${TARGET_DIR}/blog/"
+> $BLOG_DIR/archive
+POSTS=$(ls $BLOG_DIR*.md)
+LENGTH=${#BLOG_DIR} 
+LENGTH=$(expr $LENGTH + 1) 
+for i in $POSTS; do
+    j=${i%.*} # remove .md
+    j=$(echo "$j" | cut -c ${LENGTH}-)
+    j=$(echo "$j" | sed 's/-/\ /g')
+    j=$(echo "$j" | sed 's/_/\ \&mdash;\ /g')
+    echo "$j<br>" >> $BLOG_DIR/archive
+done
+}
+
 build_blog_page () {
 BUILD_TARGET=${1}
 BUILD_SOURCE=${2}
@@ -140,20 +155,19 @@ add_header ${BUILD_TARGET}
 
 printf '
 <div class="row">
-<div class="column side">
-Posts
-<ul>
-	<li display="inline"><a href="1.html">2021-05-30</a></li>
-	<li display="inline"><a href="2.html">2021-05-29</a></li>
-</ul>
+<div class="column side">\n'\
+>> "${BUILD_TARGET}" 
+printf '
 </div>
 <div class="column middle">\n'\
 >> "${BUILD_TARGET}" 
 
+#printf '<h1>Posts</h1>' >> ${BUILD_TARGET}
+cat $TARGET_DIR/blog/archive >> "${BUILD_TARGET}" 
 
-if [ -e ${BUILD_SOURCE} ]; then
-	cat "${BUILD_SOURCE}" >> "${BUILD_TARGET}"
-fi
+#if [ -e ${BUILD_SOURCE} ]; then
+#	cat "${BUILD_SOURCE}" >> "${BUILD_TARGET}"
+#fi
 
 printf '
 </div>
@@ -186,7 +200,8 @@ case $1 in
 		source_metadata
 		build_page index.html index_text
 		build_page about.html about_text 
-        build_blog_posts
+        build_blog_archive
+        markup_blog_posts
 		exit 1
 		;;
 	*)
