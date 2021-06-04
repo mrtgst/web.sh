@@ -1,4 +1,5 @@
 #!/bin/sh
+VERSION=0.1.0
 TARGET_DIR=$2
 CURRENT_YEAR=$(date +"%Y")
 CURRENT_DATE=$(date +"%Y-%m-%d")
@@ -48,9 +49,11 @@ printf "\
 add_footer () {
 printf '
 <footer>
+<div class=footer>
 	&copy; %s<br>
     Built with <a href='https://github.com/mrtgst/web.sh'>web.sh</a><br>
     No scripts, no cookies
+</div>
 </footer>\n' ${CURRENT_YEAR}\
 >> $1
 }

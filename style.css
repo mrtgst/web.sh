@@ -25,12 +25,13 @@ a {
   text-decoration: none;
   color: black;
 }
+
 a:visited {
   text-decoration: none;
   color: black;
 }
 a:hover {
-  background-color: #000000; 
+  background-color: teal; 
   color: #ffffff;
 }
 
@@ -48,10 +49,23 @@ footer {
   /* margin-top: 300px; */
   font-size: 0.8em;
   font-family: monospace;
-   padding-top: 30px;
-   padding-bottom: 30px;
+  color: rgb(155, 155, 155);
+  padding-top: 30px;
+  padding-bottom: 30px;
 }
 
+.footer a {
+  color:rgb(155, 155, 155);
+}
+
+.footer a:visited {
+  text-decoration: none;
+  color:rgb(155, 155, 155);
+}
+.footer a:hover {
+  background-color: teal; 
+  color: #ffffff;
+}
 .banner a {
   color: black;
 }
