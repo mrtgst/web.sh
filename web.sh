@@ -84,7 +84,7 @@ printf "\
 > $1
 
 echo '<div class=banner>' >> $1
-echo '<a href=index.html>' >> $1
+echo '<a href=/index.html>' >> $1
 add_figlet $1 
 echo '</a>' >> $1
 echo '</div>' >> "$1"
