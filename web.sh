@@ -1,5 +1,5 @@
 #!/bin/bash
-VERSION=0.1.10
+VERSION=0.1.11
 TARGET_DIR=$2
 CURRENT_YEAR=$(date +"%Y")
 CURRENT_DATE=$(date +"%Y-%m-%d")
@@ -192,12 +192,12 @@ build_blog_page () {
 
 	printf '
 	<div class="row">
-	<div class="column side">\n'\
+	<div class="column side">'\
 	>> "${BUILD_TARGET}" 
 
 	printf '
 	</div>
-	<div class="column middle">\n'\
+	<div class="column middle">'\
 	>> "${BUILD_TARGET}" 
 
 	#printf '<h1>Posts</h1>' >> ${BUILD_TARGET}
