@@ -110,6 +110,7 @@ footer {
 /* Middle column */
 .column.middle {
   width: 50%;
+  max-width: 50em;
   padding-bottom: 30px;
 }
 
