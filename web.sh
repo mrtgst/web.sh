@@ -11,9 +11,9 @@ init () {
 		mkdir -p ${TARGET_DIR}/blog  
     	printf "# Blog title\nSome blog text." > ${TARGET_DIR}/blog/${CURRENT_DATE}_blog-title.md
 	fi
-	if ! [ -e ${TARGET_DIR}/content/blank_text ]; then echo "" > ${TARGET_DIR}/content/blank_text
-	if ! [ -e ${TARGET_DIR}/content/index_text ]; then echo "Welcome to ${0}" > ${TARGET_DIR}/content/index_text
-	if ! [ -e ${TARGET_DIR}/content/about_text ]; then echo "Something about ${0}" > ${TARGET_DIR}/content/about_text
+	if ! [ -e ${TARGET_DIR}/content/blank_text ]; then echo "" > ${TARGET_DIR}/content/blank_text; fi
+	if ! [ -e ${TARGET_DIR}/content/index_text ]; then echo "Welcome to ${0}" > ${TARGET_DIR}/content/index_text; fi
+	if ! [ -e ${TARGET_DIR}/content/about_text ]; then echo "Something about ${0}" > ${TARGET_DIR}/content/about_text; fi
 
 	# write to metadata file
 	printf "# these variables contain the site metadata
