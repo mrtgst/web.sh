@@ -1,5 +1,5 @@
 #!/bin/bash
-VERSION=0.1.6
+VERSION=0.1.7
 TARGET_DIR=$2
 CURRENT_YEAR=$(date +"%Y")
 CURRENT_DATE=$(date +"%Y-%m-%d")
@@ -70,10 +70,10 @@ add_footer () {
 	<footer>
 	<div class=footer>
 		&copy; %s<br>
-		Built with <a href='https://github.com/mrtgst/web.sh'>web.sh</a><br>
+		Built with <a href='https://github.com/mrtgst/web.sh'>web.sh %s</a><br>
 		Total size %d kb. No scripts, no cookies
 	</div>
-	</footer>\n' ${CURRENT_YEAR} ${SIZE}\
+	</footer>\n' ${CURRENT_YEAR} ${VERSION} ${SIZE}\
 	>> $build_target
 }
 
