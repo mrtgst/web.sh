@@ -1,5 +1,5 @@
 #!/bin/sh
-VERSION=0.1.1
+VERSION=0.1.2
 TARGET_DIR=$2
 CURRENT_YEAR=$(date +"%Y")
 CURRENT_DATE=$(date +"%Y-%m-%d")
@@ -16,20 +16,22 @@ init () {
 	if ! [ -e ${TARGET_DIR}/content/about_text ]; then echo "Something about ${0}" > ${TARGET_DIR}/content/about_text; fi
 
 	# write to metadata file
-	printf "# these variables contain the site metadata
-	# edit them to fit your site\n
-	TITLE=%s
-	FIGLET_TITLE_TEXT=%s
-	# available figlet fonts: 
-	# banner, block, digital, lean, mnemonic, shadow, small, smshadow, standard,
-	# big, bubble, ivrit, mini, script, slant, smscript, smslant, term
-	FIGLET_FONT='small'
-	" ${0} ${0} > ${TARGET_DIR}/content/metadata
+	if ! [ -e ${TARGET_DIR}/content/metadata ]; then
+		printf "# these variables contain the site metadata
+		# edit them to fit your site\n
+		TITLE=%s
+		FIGLET_TITLE_TEXT=%s
+		# available figlet fonts: 
+		# banner, block, digital, lean, mnemonic, shadow, small, smshadow, standard,
+		# big, bubble, ivrit, mini, script, slant, smscript, smslant, term
+		FIGLET_FONT='small'
+		" ${0} ${0} > ${TARGET_DIR}/content/metadata
+		echo "Wrote ${TARGET_DIR}/content/metadata file"
+	fi
 
 	# copy stylesheet
-	cp ./style.css ${TARGET_DIR}
-
-	echo "Created ${TARGET_DIR}/content folder with template files."
+	cp ./style.css ${TARGET_DIR} &&\
+	echo "Copied stylesheet to ${TARGET_DIR}/style.css"
 }
 
 source_metadata () {
@@ -49,8 +51,8 @@ add_navbar () {
 printf "\
 <div class="navbar">
 <ul>
-	<li display="inline"><a href="blog.html">blog</a></li>
-	<li display="inline"><a href="about.html">about</a></li>
+	<li display="inline"><a href="/blog.html">blog</a></li>
+	<li display="inline"><a href="/about.html">about</a></li>
 </ul>
 </div>\n" >> ${1} 
 }
@@ -74,7 +76,7 @@ printf "\
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<link rel="stylesheet" type="text/css" href="style.css">
+<link rel="stylesheet" type="text/css" href="/style.css">
 <title>${TITLE}</title>
 </head>
 <body>
@@ -137,8 +139,8 @@ for i in ${POSTS}; do
     pandoc $i --from markdown --to html --output $j.tmp
     build_blog_page $j.html $j.tmp 
     rm -f $j.tmp
+    cp $j.html ${TARGET_DIR}/blog/
 done
-cp $j.html ${TARGET_DIR}/blog.html
 }
 
 build_blog_archive () {
@@ -150,9 +152,11 @@ LENGTH=$(expr $LENGTH + 1)
 for i in $POSTS; do
     j=${i%.*} # remove .md
     j=$(echo "$j" | cut -c ${LENGTH}-)
+    k="$j.html"
     j=$(echo "$j" | sed 's/-/\ /g')
     j=$(echo "$j" | sed 's/_/\ \&mdash;\ /g')
-    echo "$j<br>" >> $BLOG_DIR/archive
+    # make hyperlink
+    echo "<a href='blog/$k'>$j</a><br>" >> $BLOG_DIR/archive
 done
 }
 
@@ -172,7 +176,8 @@ printf '
 >> "${BUILD_TARGET}" 
 
 #printf '<h1>Posts</h1>' >> ${BUILD_TARGET}
-cat $TARGET_DIR/blog/archive >> "${BUILD_TARGET}" 
+#cat $TARGET_DIR/blog/archive >> "${BUILD_TARGET}" 
+cat $2 >> "${BUILD_TARGET}"
 
 #if [ -e ${BUILD_SOURCE} ]; then
 #	cat "${BUILD_SOURCE}" >> "${BUILD_TARGET}"
@@ -209,8 +214,8 @@ case $1 in
 		source_metadata
 		build_page index.html index_text
 		build_page about.html about_text 
-        build_blog_archive
-        markup_blog_posts
+        	build_blog_archive
+        	markup_blog_posts
 		exit 1
 		;;
 	*)
