@@ -23,12 +23,12 @@ pre {
 
 a {
   text-decoration: none;
-  color: black;
+  color: teal;
 }
 
 a:visited {
   text-decoration: none;
-  color: black;
+  color: teal;
 }
 a:hover {
   background-color: teal; 
@@ -55,26 +55,32 @@ footer {
 }
 
 .footer a {
-  color:rgb(155, 155, 155);
+  color: teal;
 }
 
 .footer a:visited {
   text-decoration: none;
-  color:rgb(155, 155, 155);
+  color: teal;
 }
+
 .footer a:hover {
   background-color: teal; 
   color: #ffffff;
 }
+
 .banner a {
   color: black;
+}
+
+.banner a:hover {
+  color: teal;
 }
 
 .navbar {
   overflow: hidden;
   /* background-color: #f1f1f1; */
   text-align: center;
-  padding-bottom: 30px;
+  padding-bottom: 10px;
 }
 
 .navbar a {
@@ -111,7 +117,6 @@ footer {
 .column.middle {
   width: 50%;
   max-width: 50em;
-  padding-bottom: 30px;
 }
 
 /* Clear floats after the columns */
