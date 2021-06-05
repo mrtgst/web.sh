@@ -3,24 +3,33 @@ VERSION=0.1.1
 TARGET_DIR=$2
 CURRENT_YEAR=$(date +"%Y")
 CURRENT_DATE=$(date +"%Y-%m-%d")
+
 init () {
+	# initiate template files
 	if ! [ -d ${TARGET_DIR}/content ]; then mkdir -p ${TARGET_DIR}/content; fi
-	if ! [ -d ${TARGET_DIR}/blog ]; then mkdir -p ${TARGET_DIR}/blog; fi
-    printf "# Blog title\nSome blog text." > ${TARGET_DIR}/blog/${CURRENT_DATE}_blog-title.md
-	echo "" > ${TARGET_DIR}/content/blank_text
-	echo "Welcome to ${0}" > ${TARGET_DIR}/content/index_text
-	echo "Something about ${0}" > ${TARGET_DIR}/content/about_text
+	if ! [ -d ${TARGET_DIR}/blog ]; then 
+		mkdir -p ${TARGET_DIR}/blog  
+    	printf "# Blog title\nSome blog text." > ${TARGET_DIR}/blog/${CURRENT_DATE}_blog-title.md
+	fi
+	if ! [ -e ${TARGET_DIR}/content/blank_text ]; then echo "" > ${TARGET_DIR}/content/blank_text
+	if ! [ -e ${TARGET_DIR}/content/index_text ]; then echo "Welcome to ${0}" > ${TARGET_DIR}/content/index_text
+	if ! [ -e ${TARGET_DIR}/content/about_text ]; then echo "Something about ${0}" > ${TARGET_DIR}/content/about_text
+
+	# write to metadata file
 	printf "# these variables contain the site metadata
-# edit them to fit your site\n
-TITLE=%s
-FIGLET_TITLE_TEXT=%s
-# available figlet fonts: 
-# banner, block, digital, lean, mnemonic, shadow, small, smshadow, standard,
-# big, bubble, ivrit, mini, script, slant, smscript, smslant, term
-FIGLET_FONT='small'
-" ${0} ${0} > ${TARGET_DIR}/content/metadata
-cp ./style.css ${TARGET_DIR}
-echo "Created ${TARGET_DIR}/content folder with template files."
+	# edit them to fit your site\n
+	TITLE=%s
+	FIGLET_TITLE_TEXT=%s
+	# available figlet fonts: 
+	# banner, block, digital, lean, mnemonic, shadow, small, smshadow, standard,
+	# big, bubble, ivrit, mini, script, slant, smscript, smslant, term
+	FIGLET_FONT='small'
+	" ${0} ${0} > ${TARGET_DIR}/content/metadata
+
+	# copy stylesheet
+	cp ./style.css ${TARGET_DIR}
+
+	echo "Created ${TARGET_DIR}/content folder with template files."
 }
 
 source_metadata () {
