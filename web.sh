@@ -1,11 +1,13 @@
 #!/bin/bash
-VERSION=0.1.7
+VERSION=0.1.9
 TARGET_DIR=$2
 CURRENT_YEAR=$(date +"%Y")
 CURRENT_DATE=$(date +"%Y-%m-%d")
 
 get_size () {
-	SIZE="$(du $0 | awk '{print $1}' | tail -n1)"
+	# gets size in kB
+	SIZE=$(du -b $1 | tail -n1 | cut -d $'\t' -f1)
+	SIZE=$(( SIZE / 1000 ))
 }
 
 init () {
@@ -71,7 +73,7 @@ add_footer () {
 	<div class=footer>
 		&copy; %s<br>
 		Built with <a href='https://github.com/mrtgst/web.sh'>web.sh %s</a><br>
-		Total size %d kb. No scripts, no cookies
+		Total size %d kB. No scripts, no cookies
 	</div>
 	</footer>\n' ${CURRENT_YEAR} ${VERSION} ${SIZE}\
 	>> $build_target
