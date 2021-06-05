@@ -1,5 +1,5 @@
 #!/bin/bash
-VERSION=0.1.4
+VERSION=0.1.5
 TARGET_DIR=$2
 CURRENT_YEAR=$(date +"%Y")
 CURRENT_DATE=$(date +"%Y-%m-%d")
@@ -217,17 +217,17 @@ build_blog_page () {
 
 help () {
 	echo "web.sh $VERSION. Available commands:
-	--init destination 
-	--build destination"
+	init destination 
+	build destination"
 }
 
 case $1 in
-	--init)
+	init)
 		init
 		source_metadata
 		exit 1
 		;;
-	--build)
+	build)
 		source_metadata
 		build_page index.html index_text
 		build_page about.html about_text 
