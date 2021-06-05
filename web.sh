@@ -1,5 +1,5 @@
 #!/bin/bash
-VERSION=0.1.3
+VERSION=0.1.4
 TARGET_DIR=$2
 CURRENT_YEAR=$(date +"%Y")
 CURRENT_DATE=$(date +"%Y-%m-%d")
@@ -152,7 +152,7 @@ POSTS=$(ls ${TARGET_DIR}/blog/*.md)
 for i in ${POSTS}; do
     j=${i%.*} # remove .md
     pandoc $i --from markdown --to html --output $j.tmp
-    build_blog_page $j.html $j.tmp 
+    build_blog_page $j.html $j.tmp '../'
     rm -f $j.tmp
     cp $j.html ${TARGET_DIR}/blog/ 2> /dev/null
 done
@@ -176,41 +176,43 @@ done
 }
 
 build_blog_page () {
-BUILD_TARGET=${1}
-BUILD_SOURCE=${2}
+	local BUILD_TARGET=${1}
+	local BUILD_SOURCE=${2}
+	local link_prefix=${3}
 
-add_header "${BUILD_TARGET}" '../'
+	add_header "${BUILD_TARGET}" $link_prefix 
 
-printf '
-<div class="row">
-<div class="column side">\n'\
->> "${BUILD_TARGET}" 
-printf '
-</div>
-<div class="column middle">\n'\
->> "${BUILD_TARGET}" 
+	printf '
+	<div class="row">
+	<div class="column side">\n'\
+	>> "${BUILD_TARGET}" 
 
-#printf '<h1>Posts</h1>' >> ${BUILD_TARGET}
-#cat $TARGET_DIR/blog/archive >> "${BUILD_TARGET}" 
-cat $2 >> "${BUILD_TARGET}"
+	printf '
+	</div>
+	<div class="column middle">\n'\
+	>> "${BUILD_TARGET}" 
 
-#if [ -e ${BUILD_SOURCE} ]; then
-#	cat "${BUILD_SOURCE}" >> "${BUILD_TARGET}"
-#fi
+	#printf '<h1>Posts</h1>' >> ${BUILD_TARGET}
+	#cat $TARGET_DIR/blog/archive >> "${BUILD_TARGET}" 
+	cat $BUILD_SOURCE >> "${BUILD_TARGET}"
 
-printf '
-</div>
-<div class="column side">
-</div>
-</div>\n'\
->> "${BUILD_TARGET}"
+	#if [ -e ${BUILD_SOURCE} ]; then
+	#	cat "${BUILD_SOURCE}" >> "${BUILD_TARGET}"
+	#fi
 
-add_footer "${BUILD_TARGET}"
+	printf '
+	</div>
+	<div class="column side">
+	</div>
+	</div>\n'\
+	>> "${BUILD_TARGET}"
 
-printf "\
-</body>
-</html>\
-" >> "${BUILD_TARGET}"
+	add_footer "${BUILD_TARGET}"
+
+	printf "\
+	</body>
+	</html>\
+	" >> "${BUILD_TARGET}"
 }
 
 help () {
@@ -231,7 +233,7 @@ case $1 in
 		build_page about.html about_text 
        	build_blog_archive
        	markup_blog_posts
-		build_blog_page blog.html ${TARGET_DIR}/blog/archive
+		build_blog_page ${TARGET_DIR}/blog.html ${TARGET_DIR}/blog/archive ''
 		exit 1
 		;;
 	*)
