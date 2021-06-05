@@ -1,8 +1,12 @@
-#!/bin/sh
-VERSION=0.1.2
+#!/bin/bash
+VERSION=0.1.3
 TARGET_DIR=$2
 CURRENT_YEAR=$(date +"%Y")
 CURRENT_DATE=$(date +"%Y-%m-%d")
+
+get_size () {
+	SIZE="$(du $0 | awk '{print $1}' | tail -n1)"
+}
 
 init () {
 	# initiate template files
@@ -48,52 +52,63 @@ add_figlet () {
 
 
 add_navbar () {
-printf "\
-<div class="navbar">
-<ul>
-	<li display="inline"><a href="/blog.html">blog</a></li>
-	<li display="inline"><a href="/about.html">about</a></li>
-</ul>
-</div>\n" >> ${1} 
+	local build_target=$1
+	local link_prefix=$2
+	printf "\
+	<div class="navbar">
+	<ul>
+		<li display="inline"><a href="%sblog.html">blog</a></li>
+		<li display="inline"><a href="%sabout.html">about</a></li>
+	</ul>
+	</div>\n" $link_prefix $link_prefix >> $build_target 
 }
 
 add_footer () {
-printf '
-<footer>
-<div class=footer>
-	&copy; %s<br>
-    Built with <a href='https://github.com/mrtgst/web.sh'>web.sh</a><br>
-    No scripts, no cookies
-</div>
-</footer>\n' ${CURRENT_YEAR}\
->> $1
+	local build_target=$1
+	get_size $TARGET_DIR
+	printf '
+	<footer>
+	<div class=footer>
+		&copy; %s<br>
+		Built with <a href='https://github.com/mrtgst/web.sh'>web.sh</a><br>
+		Total size %d kb. No scripts, no cookies
+	</div>
+	</footer>\n' ${CURRENT_YEAR} ${SIZE}\
+	>> $build_target
 }
 
 add_header () {
-printf "\
-<!doctype html>
-<html lang="en">
-<head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width,initial-scale=1">
-<link rel="stylesheet" type="text/css" href="/style.css">
-<title>${TITLE}</title>
-</head>
-<body>
-<header>\n"\
-> $1
+	local build_target=$1
+	local link_prefix=$2
 
-echo '<div class=banner>' >> $1
-echo '<a href=/index.html>' >> $1
-add_figlet $1 
-echo '</a>' >> $1
-echo '</div>' >> "$1"
+	printf "\
+	<!doctype html>
+	<html lang="en">
+	<head>
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width,initial-scale=1">
+	<link rel="stylesheet" type="text/css" href="%sstyle.css">
+	<title>${TITLE}</title>
+	</head>
+	<body>
+	<header>\n" $link_prefix\
+	> $build_target
+	
+	echo '<div class=banner>' >> $build_target
 
-printf '
-</header>\n'\
->> $1 
+	printf "<a href=%sindex.html>" $link_prefix >> $build_target
 
-add_navbar $1
+	add_figlet $build_target 
+
+	echo '</a>' >> $build_target
+
+	echo '</div>' >> $build_target
+	
+	printf '
+	</header>\n'\
+	>> $build_target 
+	
+	add_navbar $build_target $link_prefix
 }
 
 
@@ -139,7 +154,7 @@ for i in ${POSTS}; do
     pandoc $i --from markdown --to html --output $j.tmp
     build_blog_page $j.html $j.tmp 
     rm -f $j.tmp
-    cp $j.html ${TARGET_DIR}/blog/
+    cp $j.html ${TARGET_DIR}/blog/ 2> /dev/null
 done
 }
 
@@ -164,7 +179,7 @@ build_blog_page () {
 BUILD_TARGET=${1}
 BUILD_SOURCE=${2}
 
-add_header ${BUILD_TARGET}
+add_header "${BUILD_TARGET}" '../'
 
 printf '
 <div class="row">
@@ -214,8 +229,9 @@ case $1 in
 		source_metadata
 		build_page index.html index_text
 		build_page about.html about_text 
-        	build_blog_archive
-        	markup_blog_posts
+       	build_blog_archive
+       	markup_blog_posts
+		build_blog_page blog.html ${TARGET_DIR}/blog/archive
 		exit 1
 		;;
 	*)
