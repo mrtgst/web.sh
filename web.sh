@@ -1,5 +1,5 @@
 #!/bin/bash
-VERSION=0.1.5
+VERSION=0.1.6
 TARGET_DIR=$2
 CURRENT_YEAR=$(date +"%Y")
 CURRENT_DATE=$(date +"%Y-%m-%d")
@@ -13,7 +13,7 @@ init () {
 	if ! [ -d ${TARGET_DIR}/content ]; then mkdir -p ${TARGET_DIR}/content; fi
 	if ! [ -d ${TARGET_DIR}/blog ]; then 
 		mkdir -p ${TARGET_DIR}/blog  
-    	printf "# Blog title\nSome blog text." > ${TARGET_DIR}/blog/${CURRENT_DATE}_blog-title.md
+    	printf "## Blog title\nSome blog text." > ${TARGET_DIR}/blog/${CURRENT_DATE}_Blog-Title.md
 	fi
 	if ! [ -e ${TARGET_DIR}/content/blank_text ]; then echo "" > ${TARGET_DIR}/content/blank_text; fi
 	if ! [ -e ${TARGET_DIR}/content/index_text ]; then echo "Welcome to ${0}" > ${TARGET_DIR}/content/index_text; fi
@@ -159,20 +159,24 @@ done
 }
 
 build_blog_archive () {
-BLOG_DIR="${TARGET_DIR}/blog/"
-> $BLOG_DIR/archive
-POSTS=$(ls $BLOG_DIR*.md)
-LENGTH=${#BLOG_DIR} 
-LENGTH=$(expr $LENGTH + 1) 
-for i in $POSTS; do
-    j=${i%.*} # remove .md
-    j=$(echo "$j" | cut -c ${LENGTH}-)
-    k="$j.html"
-    j=$(echo "$j" | sed 's/-/\ /g')
-    j=$(echo "$j" | sed 's/_/\ \&mdash;\ /g')
-    # make hyperlink
-    echo "<a href='blog/$k'>$j</a><br>" >> $BLOG_DIR/archive
-done
+	BLOG_DIR="${TARGET_DIR}/blog/"
+	> $BLOG_DIR/archive
+	POSTS=$(ls $BLOG_DIR*.md)
+	LENGTH=${#BLOG_DIR} 
+	LENGTH=$(expr $LENGTH + 1) 
+	for i in $POSTS; do
+	    j=${i%.*} # remove .md
+	    j=$(echo "$j" | cut -c ${LENGTH}-)
+	    k="$j.html"
+		# cut out and format date
+		datef=$(echo $j | cut -d '_' -f1 | date -d - +'%b %d %Y')
+		# cut out title
+		title=$(echo $j | cut -d '_' -f2)
+	    title=$(echo "$title" | sed 's/-/\ /g')
+	    #title=$(echo "$title" | sed 's/_/\ \&mdash;\ /g')
+	    # make hyperlink
+	    echo "<a href='blog/$k'>$datef - $title</a><br>" >> $BLOG_DIR/archive
+	done
 }
 
 build_blog_page () {
