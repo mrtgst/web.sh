@@ -1,5 +1,5 @@
 #!/bin/bash
-VERSION=0.1.9
+VERSION=0.1.10
 TARGET_DIR=$2
 CURRENT_YEAR=$(date +"%Y")
 CURRENT_DATE=$(date +"%Y-%m-%d")
@@ -67,15 +67,14 @@ add_navbar () {
 
 add_footer () {
 	local build_target=$1
-	get_size $TARGET_DIR
 	printf '
 	<footer>
 	<div class=footer>
 		&copy; %s<br>
 		Built with <a href='https://github.com/mrtgst/web.sh'>web.sh %s</a><br>
-		Total size %d kB. No scripts, no cookies
+		No scripts, no cookies
 	</div>
-	</footer>\n' ${CURRENT_YEAR} ${VERSION} ${SIZE}\
+	</footer>\n' ${CURRENT_YEAR} ${VERSION}\
 	>> $build_target
 }
 
@@ -151,12 +150,15 @@ printf "\
 
 markup_blog_posts () {
 POSTS=$(ls ${TARGET_DIR}/blog/*.md)
+LENGTH=${#BLOG_DIR} 
+LENGTH=$(( LENGTH + 1 )) 
 for i in ${POSTS}; do
     j=${i%.*} # remove .md
+	k=$(echo "$j" | cut -c ${LENGTH}-)
+	#k=$(echo $k | cut -d $'_' -f2)
     pandoc $i --from markdown --to html --output $j.tmp
     build_blog_page $j.html $j.tmp '../'
     rm -f $j.tmp
-    cp $j.html ${TARGET_DIR}/blog/ 2> /dev/null
 done
 }
 
@@ -234,12 +236,17 @@ case $1 in
 		exit 1
 		;;
 	build)
+		echo "Building..."
 		source_metadata
 		build_page index.html index_text
-		build_page about.html about_text 
        	build_blog_archive
        	markup_blog_posts
 		build_blog_page ${TARGET_DIR}/blog.html ${TARGET_DIR}/blog/archive ''
+		get_size $TARGET_DIR
+		build_page about.html about_text 
+		get_size $TARGET_DIR
+		echo "Build completed."
+		echo "Total build size: $SIZE kB"
 		exit 1
 		;;
 	*)
