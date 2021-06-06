@@ -205,13 +205,7 @@ build_blog_page () {
 	<div class="row">'\
 	>> "${BUILD_TARGET}" 
 
-	#printf '<h1>Posts</h1>' >> ${BUILD_TARGET}
-	#cat $TARGET_DIR/blog/archive >> "${BUILD_TARGET}" 
 	cat $BUILD_SOURCE >> "${BUILD_TARGET}"
-
-	#if [ -e ${BUILD_SOURCE} ]; then
-	#	cat "${BUILD_SOURCE}" >> "${BUILD_TARGET}"
-	#fi
 
 	printf '
 	</div>
