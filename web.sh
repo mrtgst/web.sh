@@ -1,5 +1,5 @@
 #!/bin/bash
-VERSION=0.1.19
+VERSION=0.1.20
 TARGET_DIR=$2
 CURRENT_YEAR=$(date +"%Y")
 CURRENT_DATE=$(date +"%Y-%m-%d")
@@ -152,22 +152,27 @@ LENGTH=${#BLOG_DIR}
 LENGTH=$(( LENGTH + 1 )) 
 for i in ${posts}; do
     path=${i%.*} # remove .md
+	tmpfile=$path.tmp
+	cat $i > $tmpfile 
 	title=$(echo "$path" | cut -c ${LENGTH}-) # keep only title
 	printf 'Blog post \"%s\" ' "$title"
-	title=$(echo $title | cut -d $'_' -f2 | sed 's/-/\ /g') # replace dashes with space
-	first_line=$(head -n1 $i)
+	titlef=$(echo $title | cut -d $'_' -f2 | sed 's/-/\ /g') # replace dashes with space
+	datef=$(echo $title | cut -d $'_' -f1 ) # replace dashes with space
+	datef=$(date -d $datef +'%B %d, %Y')
+	first_line=$(head -n1 $tmpfile)
 	# check if title exists in md file, if not add it
 	if echo "$first_line" | grep --quiet '##'; then
 		# if title exists
-		sed -i "1d" $i # delete first line
-		sed -i "1s/^/## $title\n/" $i # add title on first line
+		sed -i "1d" $tmpfile # delete first line
+		sed -i "1s/^/## $titlef\n/" $tmpfile # add title on first line
 	else
 		# if no title
-		sed -i "1s/^/## $title\n/" $i # add title on first line
+		sed -i "1s/^/## $titlef\n/" $tmpfile # add title on first line
 	fi
-    pandoc $i --from markdown --to html --output $path.tmp
-    build_blog_page $path.html $path.tmp '../'
-    rm -f $path.tmp
+	printf '<p><center><pre>* * *</pre></center></p><p><small>Posted %s</small></p>\n' "$datef" >> $tmpfile
+    pandoc $tmpfile --from markdown --to html --output $tmpfile.html
+    build_blog_page $path.html $tmpfile.html '../'
+    rm -f $tmpfile $tmpfile.html
 	printf '... Done\n'
 done
 }
