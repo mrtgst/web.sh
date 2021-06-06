@@ -1,5 +1,5 @@
 #!/bin/bash
-VERSION=0.1.25
+VERSION=0.1.26
 TARGET_DIR=$2
 CURRENT_YEAR=$(date +"%Y")
 CURRENT_DATE=$(date +"%Y-%m-%d")
@@ -18,7 +18,7 @@ init () {
     	printf "Some blog text." > ${TARGET_DIR}/blog/${CURRENT_DATE}_Blog-Title.md
 	fi
 	if ! [ -e ${TARGET_DIR}/content/blank_text ]; then echo "" > ${TARGET_DIR}/content/blank_text; fi
-	if ! [ -e ${TARGET_DIR}/content/index_text ]; then echo "Welcome to ${0}" > ${TARGET_DIR}/content/index_text; fi
+	if ! [ -e ${TARGET_DIR}/content/home_text ]; then echo "Welcome to ${0}" > ${TARGET_DIR}/content/home_text; fi
 	if ! [ -e ${TARGET_DIR}/content/about_text ]; then echo "Something about ${0}" > ${TARGET_DIR}/content/about_text; fi
 
 	# write to metadata file
@@ -59,6 +59,7 @@ add_navbar () {
 	printf "\
 	<div class="navbar">
 	<ul>
+		<li display="inline"><a href="%sindex.html">home</a></li>
 		<li display="inline"><a href="%sblog.html">blog</a></li>
 		<li display="inline"><a href="%sabout.html">about</a></li>
 	</ul>
@@ -240,7 +241,7 @@ case $1 in
 	build)
 		echo "Building ..."
 		source_metadata
-		build_page index.html index_text
+		build_page index.html home_text
        	build_blog_archive
        	build_blog_post "${TARGET_DIR}/blog/*.md"
 		build_blog_page ${TARGET_DIR}/blog.html ${TARGET_DIR}/blog/.archive ''
