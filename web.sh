@@ -1,5 +1,5 @@
 #!/bin/bash
-VERSION=0.1.15
+VERSION=0.1.16
 TARGET_DIR=$2
 CURRENT_YEAR=$(date +"%Y")
 CURRENT_DATE=$(date +"%Y-%m-%d")
@@ -15,7 +15,7 @@ init () {
 	if ! [ -d ${TARGET_DIR}/content ]; then mkdir -p ${TARGET_DIR}/content; fi
 	if ! [ -d ${TARGET_DIR}/blog ]; then 
 		mkdir -p ${TARGET_DIR}/blog  
-    	printf "## Blog title\nSome blog text." > ${TARGET_DIR}/blog/${CURRENT_DATE}_Blog-Title.md
+    	printf "Some blog text." > ${TARGET_DIR}/blog/${CURRENT_DATE}_Blog-Title.md
 	fi
 	if ! [ -e ${TARGET_DIR}/content/blank_text ]; then echo "" > ${TARGET_DIR}/content/blank_text; fi
 	if ! [ -e ${TARGET_DIR}/content/index_text ]; then echo "Welcome to ${0}" > ${TARGET_DIR}/content/index_text; fi
@@ -151,12 +151,17 @@ POSTS=$1
 LENGTH=${#BLOG_DIR} 
 LENGTH=$(( LENGTH + 1 )) 
 for i in ${POSTS}; do
-    j=${i%.*} # remove .md
-	k=$(echo "$j" | cut -c ${LENGTH}-)
-	#k=$(echo $k | cut -d $'_' -f2)
-    pandoc $i --from markdown --to html --output $j.tmp
-    build_blog_page $j.html $j.tmp '../'
-    rm -f $j.tmp
+    path=${i%.*} # remove .md
+	echo $path
+	title=$(echo "$path" | cut -c ${LENGTH}-) # keep only title
+	title=$(echo $title | cut -d $'_' -f2 | sed 's/-/\ /g')
+	first_line=$(head -n1 $i)
+	if ! echo "$first_line" | grep --quiet '##'; then
+		sed -i "1s/^/## $title\n/" $i
+	fi
+    pandoc $i --from markdown --to html --output $path.tmp
+    build_blog_page $path.html $path.tmp '../'
+    rm -f $path.tmp
 done
 }
 
