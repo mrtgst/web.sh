@@ -156,8 +156,13 @@ for i in ${POSTS}; do
 	title=$(echo $title | cut -d $'_' -f2 | sed 's/-/\ /g') # replace dashes with space
 	first_line=$(head -n1 $i)
 	# check if title exists in md file, if not add it
-	if ! echo "$first_line" | grep --quiet '##'; then
-		sed -i "1s/^/## $title\n/" $i
+	if echo "$first_line" | grep --quiet '##'; then
+		# if title exists
+		sed -i "1d" $i # delete first line
+		sed -i "1s/^/## $title\n/" $i # add title on first line
+	else
+		# if no title
+		sed -i "1s/^/## $title\n/" $i # add title on first line
 	fi
     pandoc $i --from markdown --to html --output $path.tmp
     build_blog_page $path.html $path.tmp '../'
@@ -168,7 +173,7 @@ done
 build_blog_archive () {
 	BLOG_DIR="${TARGET_DIR}/blog/"
 	> $BLOG_DIR/archive
-	POSTS=$(ls $BLOG_DIR*.md)
+	POSTS=$(ls -r $BLOG_DIR*.md)
 	LENGTH=${#BLOG_DIR} 
 	LENGTH=$(expr $LENGTH + 1) 
 	for i in $POSTS; do
