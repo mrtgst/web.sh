@@ -101,36 +101,11 @@ footer {
 }
 
 
-/* Create three unequal columns that float next to each other */
-.column {
-  float: none;
-}
-
-/* Left and right column */
-.column.side {
-  width: 25%;
-}
-
 /* Middle column */
 .column.middle {
   margin-left: auto;
   margin-right: auto;
   width: 50%;
   max-width: 40em;
+  justify-content: center;
 }
-
-/* Clear floats after the columns 
-.row:after {
-  content: "";
-  display: table;
-  clear: both;
-}
-*/
-
-/* Responsive layout - makes the three columns stack on top of each other instead of next to each other 
-@media screen and (max-width: 600px) {
-  .column.side, .column.middle {
-    width: 100%;
-  }
-}
-*/
