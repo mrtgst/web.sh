@@ -1,5 +1,5 @@
 #!/bin/bash
-VERSION=0.1.27
+VERSION=0.1.28
 TARGET_DIR=$2
 CURRENT_YEAR=$(date +"%Y")
 CURRENT_DATE=$(date +"%Y-%m-%d")
@@ -63,7 +63,7 @@ add_navbar () {
 		<li display="inline"><a href="%sblog.html">blog</a></li>
 		<li display="inline"><a href="%sabout.html">about</a></li>
 	</ul>
-	</div>\n" $link_prefix $link_prefix >> $build_target 
+	</div>\n" $link_prefix $link_prefix $link_prefix >> $build_target 
 }
 
 add_footer () {
