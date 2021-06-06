@@ -1,5 +1,5 @@
 #!/bin/bash
-VERSION=0.1.29
+VERSION=0.1.30
 ROOT=$2
 CONTENT_DIR=${ROOT}/content
 BLOG_DIR=${ROOT}/blog

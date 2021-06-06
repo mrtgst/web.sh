@@ -105,9 +105,9 @@ footer {
 .column.middle {
   margin-left: auto;
   margin-right: auto;
-  width: 50%;
+  width: 90%;
   max-width: 40em;
-  min-width: 30em;
+  min-width: 15em;
   min-height: 20em;
   justify-content: center;
 }
