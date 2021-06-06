@@ -124,8 +124,8 @@ BUILD_SOURCE=${TARGET_DIR}/content/${SOURCE_FILE}
 add_header ${BUILD_TARGET}
 
 printf '
-<div class="row">
-<div class="column middle">\n'\
+<div class="column middle">
+<div class="row">'\
 >> "${BUILD_TARGET}" 
 
 if [ -e ${BUILD_SOURCE} ]; then
@@ -189,8 +189,8 @@ build_blog_page () {
 	add_header "${BUILD_TARGET}" $link_prefix 
 
 	printf '
-	<div class="row">
-	<div class="column middle">'\
+	<div class="column middle">
+	<div class="row">'\
 	>> "${BUILD_TARGET}" 
 
 	#printf '<h1>Posts</h1>' >> ${BUILD_TARGET}
