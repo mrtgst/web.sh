@@ -1,5 +1,5 @@
 #!/bin/bash
-VERSION=0.1.22
+VERSION=0.1.23
 TARGET_DIR=$2
 CURRENT_YEAR=$(date +"%Y")
 CURRENT_DATE=$(date +"%Y-%m-%d")
@@ -180,7 +180,7 @@ done
 
 build_blog_archive () {
 	BLOG_DIR="${TARGET_DIR}/blog/"
-	> $BLOG_DIR/archive
+	> $BLOG_DIR/.archive
 	POSTS=$(ls -r $BLOG_DIR*.md)
 	LENGTH=${#BLOG_DIR} 
 	LENGTH=$(expr $LENGTH + 1) 
@@ -196,7 +196,7 @@ build_blog_archive () {
 	    title=$(echo "$title" | sed 's/-/\ /g')
 	    #title=$(echo "$title" | sed 's/_/\ \&mdash;\ /g')
 	    # make hyperlink
-	    echo "<a href='blog/$k'>$datef - $title</a><br>" >> $BLOG_DIR/archive
+	    echo "<a href='blog/$k'>$datef - $title</a><br>" >> $BLOG_DIR/.archive
 	done
 }
 
@@ -251,7 +251,7 @@ case $1 in
 		build_page index.html index_text
        	build_blog_archive
        	build_blog_post "${TARGET_DIR}/blog/*.md"
-		build_blog_page ${TARGET_DIR}/blog.html ${TARGET_DIR}/blog/archive ''
+		build_blog_page ${TARGET_DIR}/blog.html ${TARGET_DIR}/blog/.archive ''
 		get_size $TARGET_DIR
 		build_page about.html about_text 
 		get_size $TARGET_DIR
