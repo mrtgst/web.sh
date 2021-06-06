@@ -1,5 +1,5 @@
 #!/bin/bash
-VERSION=0.1.18
+VERSION=0.1.19
 TARGET_DIR=$2
 CURRENT_YEAR=$(date +"%Y")
 CURRENT_DATE=$(date +"%Y-%m-%d")
@@ -147,12 +147,13 @@ printf "\
 }
 
 build_blog_post () {
-POSTS=$1
+local posts=$(ls $1)
 LENGTH=${#BLOG_DIR} 
 LENGTH=$(( LENGTH + 1 )) 
-for i in ${POSTS}; do
+for i in ${posts}; do
     path=${i%.*} # remove .md
 	title=$(echo "$path" | cut -c ${LENGTH}-) # keep only title
+	printf 'Blog post \"%s\" ' "$title"
 	title=$(echo $title | cut -d $'_' -f2 | sed 's/-/\ /g') # replace dashes with space
 	first_line=$(head -n1 $i)
 	# check if title exists in md file, if not add it
@@ -167,6 +168,7 @@ for i in ${POSTS}; do
     pandoc $i --from markdown --to html --output $path.tmp
     build_blog_page $path.html $path.tmp '../'
     rm -f $path.tmp
+	printf '... Done\n'
 done
 }
 
@@ -238,11 +240,11 @@ case $1 in
 		exit 1
 		;;
 	build)
-		echo "Building..."
+		echo "Building ..."
 		source_metadata
 		build_page index.html index_text
        	build_blog_archive
-       	build_blog_post $(ls ${TARGET_DIR}/blog/*.md)
+       	build_blog_post "${TARGET_DIR}/blog/*.md"
 		build_blog_page ${TARGET_DIR}/blog.html ${TARGET_DIR}/blog/archive ''
 		get_size $TARGET_DIR
 		build_page about.html about_text 
