@@ -1,5 +1,5 @@
 #!/bin/bash
-VERSION=0.1.12
+VERSION=0.1.13
 TARGET_DIR=$2
 CURRENT_YEAR=$(date +"%Y")
 CURRENT_DATE=$(date +"%Y-%m-%d")
@@ -124,6 +124,7 @@ BUILD_SOURCE=${TARGET_DIR}/content/${SOURCE_FILE}
 add_header ${BUILD_TARGET}
 
 printf '
+<div class="row">
 <div class="column middle">\n'\
 >> "${BUILD_TARGET}" 
 
@@ -132,6 +133,7 @@ if [ -e ${BUILD_SOURCE} ]; then
 fi
 
 printf '
+</div>
 </div>\n'\
 >> "${BUILD_TARGET}"
 
@@ -187,6 +189,7 @@ build_blog_page () {
 	add_header "${BUILD_TARGET}" $link_prefix 
 
 	printf '
+	<div class="row">
 	<div class="column middle">'\
 	>> "${BUILD_TARGET}" 
 
@@ -199,6 +202,7 @@ build_blog_page () {
 	#fi
 
 	printf '
+	</div>
 	</div>\n'\
 	>> "${BUILD_TARGET}"
 
