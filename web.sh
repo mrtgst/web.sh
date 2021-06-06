@@ -69,10 +69,12 @@ add_footer () {
 	local build_target=$1
 	printf '
 	<footer>
+	<div class=row>
 	<div class=footer>
 		&copy; %s<br>
 		Built with <a href='https://github.com/mrtgst/web.sh'>web.sh %s</a><br>
 		No scripts, no cookies
+	</div>
 	</div>
 	</footer>\n' ${CURRENT_YEAR} ${VERSION}\
 	>> $build_target
@@ -122,9 +124,6 @@ BUILD_SOURCE=${TARGET_DIR}/content/${SOURCE_FILE}
 add_header ${BUILD_TARGET}
 
 printf '
-<div class="row">
-<div class="column side">
-</div>
 <div class="column middle">\n'\
 >> "${BUILD_TARGET}" 
 
@@ -133,9 +132,6 @@ if [ -e ${BUILD_SOURCE} ]; then
 fi
 
 printf '
-</div>
-<div class="column side">
-</div>
 </div>\n'\
 >> "${BUILD_TARGET}"
 
@@ -191,12 +187,6 @@ build_blog_page () {
 	add_header "${BUILD_TARGET}" $link_prefix 
 
 	printf '
-	<div class="row">
-	<div class="column side">'\
-	>> "${BUILD_TARGET}" 
-
-	printf '
-	</div>
 	<div class="column middle">'\
 	>> "${BUILD_TARGET}" 
 
@@ -209,9 +199,6 @@ build_blog_page () {
 	#fi
 
 	printf '
-	</div>
-	<div class="column side">
-	</div>
 	</div>\n'\
 	>> "${BUILD_TARGET}"
 
