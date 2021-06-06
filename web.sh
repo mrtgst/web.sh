@@ -1,5 +1,5 @@
 #!/bin/bash
-VERSION=0.1.14
+VERSION=0.1.15
 TARGET_DIR=$2
 CURRENT_YEAR=$(date +"%Y")
 CURRENT_DATE=$(date +"%Y-%m-%d")
@@ -146,8 +146,8 @@ printf "\
 
 }
 
-markup_blog_posts () {
-POSTS=$(ls ${TARGET_DIR}/blog/*.md)
+build_blog_post () {
+POSTS=$1
 LENGTH=${#BLOG_DIR} 
 LENGTH=$(( LENGTH + 1 )) 
 for i in ${POSTS}; do
@@ -231,7 +231,7 @@ case $1 in
 		source_metadata
 		build_page index.html index_text
        	build_blog_archive
-       	markup_blog_posts
+       	build_blog_post $(ls ${TARGET_DIR}/blog/*.md)
 		build_blog_page ${TARGET_DIR}/blog.html ${TARGET_DIR}/blog/archive ''
 		get_size $TARGET_DIR
 		build_page about.html about_text 
