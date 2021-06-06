@@ -1,5 +1,5 @@
 #!/bin/bash
-VERSION=0.1.17
+VERSION=0.1.18
 TARGET_DIR=$2
 CURRENT_YEAR=$(date +"%Y")
 CURRENT_DATE=$(date +"%Y-%m-%d")
@@ -181,7 +181,8 @@ build_blog_archive () {
 	    j=$(echo "$j" | cut -c ${LENGTH}-)
 	    k="$j.html"
 		# cut out and format date
-		datef=$(echo $j | cut -d '_' -f1 | date -d - +'%b %d %Y')
+		datef=$(echo $j | cut -d '_' -f1)
+		datef=$(date -d $datef +'%b %d %Y')
 		# cut out title
 		title=$(echo $j | cut -d '_' -f2)
 	    title=$(echo "$title" | sed 's/-/\ /g')
