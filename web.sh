@@ -152,10 +152,10 @@ LENGTH=${#BLOG_DIR}
 LENGTH=$(( LENGTH + 1 )) 
 for i in ${POSTS}; do
     path=${i%.*} # remove .md
-	echo $path
 	title=$(echo "$path" | cut -c ${LENGTH}-) # keep only title
-	title=$(echo $title | cut -d $'_' -f2 | sed 's/-/\ /g')
+	title=$(echo $title | cut -d $'_' -f2 | sed 's/-/\ /g') # replace dashes with space
 	first_line=$(head -n1 $i)
+	# check if title exists in md file, if not add it
 	if ! echo "$first_line" | grep --quiet '##'; then
 		sed -i "1s/^/## $title\n/" $i
 	fi
