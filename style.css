@@ -78,7 +78,6 @@ footer {
 
 .navbar {
   overflow: hidden;
-  /* background-color: #f1f1f1; */
   text-align: center;
   padding-bottom: 10px;
 }
@@ -104,8 +103,7 @@ footer {
 
 /* Create three unequal columns that float next to each other */
 .column {
-  float: right;
-  padding: 10px;
+  float: none;
 }
 
 /* Left and right column */
@@ -115,20 +113,24 @@ footer {
 
 /* Middle column */
 .column.middle {
+  margin-left: auto;
+  margin-right: auto;
   width: 50%;
-  max-width: 50em;
+  max-width: 40em;
 }
 
-/* Clear floats after the columns */
+/* Clear floats after the columns 
 .row:after {
   content: "";
   display: table;
   clear: both;
 }
+*/
 
-/* Responsive layout - makes the three columns stack on top of each other instead of next to each other */
+/* Responsive layout - makes the three columns stack on top of each other instead of next to each other 
 @media screen and (max-width: 600px) {
   .column.side, .column.middle {
     width: 100%;
   }
 }
+*/
