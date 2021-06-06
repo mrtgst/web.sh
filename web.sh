@@ -1,5 +1,5 @@
 #!/bin/bash
-VERSION=0.1.26
+VERSION=0.1.27
 TARGET_DIR=$2
 CURRENT_YEAR=$(date +"%Y")
 CURRENT_DATE=$(date +"%Y-%m-%d")
