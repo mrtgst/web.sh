@@ -1,5 +1,5 @@
 #!/bin/bash
-VERSION=0.1.32
+VERSION=0.1.33
 ROOT=$2
 CONTENT_DIR=${ROOT}/content
 BLOG_CONTENT_DIR=${ROOT}/content/blog
@@ -48,7 +48,10 @@ init () {
 	if ! [ -d ${CONTENT_DIR} ]; then mkdir -p ${CONTENT_DIR}; fi
 	if ! [ -d ${BLOG_CONTENT_DIR} ]; then 
 		mkdir -p ${BLOG_CONTENT_DIR}
-		add_blog_post "Blog title" "You can use *markdown* syntax to **typeset** your posts.\n\n### Subheaders are allowed\n If you want to use them." 
+		# add template blog post if no posts exist
+		if ! [ $(ls -A ${BLOG_CONTENT_DIR}) ]; then
+			add_blog_post "Blog title" "You can use *markdown* syntax to **typeset** your posts.\n\n### Subheaders are allowed\n If you want to use them." 
+		fi
 	fi
 	if ! [ -d ${BLOG_DIR} ]; then 
 		mkdir -p ${BLOG_DIR}  
