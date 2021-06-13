@@ -1,5 +1,5 @@
 #!/bin/bash
-VERSION=0.1.34
+VERSION=0.1.35
 ROOT=$2
 TITLE=${0:2}
 CONTENT_DIR=${ROOT}/content
@@ -183,7 +183,10 @@ build_page () {
 }
 
 build_blog_post () {
-	rm -f ${BLOG_DIR}/*
+	# clear existing posts
+	printf "Clearing existing blog posts ... "
+	rm -f ${BLOG_DIR}/*.html
+	printf "Done"
 	local posts=$(ls $1)
 	local length=${#BLOG_CONTENT_DIR} 
 	length=$(( length + 2 )) 
