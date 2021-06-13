@@ -1,5 +1,5 @@
 #!/bin/bash
-VERSION=0.2.2
+VERSION=0.2.3
 ROOT=$2
 TITLE=${0:2}
 CONTENT_DIR=${ROOT}/content
@@ -213,7 +213,9 @@ build_preview_page () {
 	</body>
 	</html>\
 	" >> "${BUILD_TARGET}"
-
+	
+	# remove preview directory when done
+	rm -rf ${PREVIEW_DIR}
 }
 
 build_blog_post () {
