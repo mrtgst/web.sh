@@ -1,5 +1,5 @@
 #!/bin/bash
-VERSION=0.2.3
+VERSION=0.2.4
 ROOT=$2
 TITLE=${0:2}
 CONTENT_DIR=${ROOT}/content
@@ -241,9 +241,14 @@ build_blog_post () {
 
 		# save text of post in a temporary file
 		cat $i >> $tmpfile 
-		#preview_text=$(grep -v '##' $i | awk 'NF' | head -c 300)
-		preview_text=$(grep -v '##' $i | awk 'NF' | cut -d ' ' -f 1-10)
-		preview_title=$(grep '##' $i | sed 's/#//g')
+
+		# cut out the first n words
+		preview_n=10
+		preview_text=$(grep -v '##' $i | awk 'NF' | cut -d ' ' -f 1-${preview_n})
+
+		# grab title from first line
+		preview_title=$(head -n1 $i | sed 's/#//g')
+		echo $preview_title
 		printf "<div class="preview"><a href='%s'><h2>%s</h2></a></div>" "blog/${filename}.html" "${preview_title}" >> $tmpfile_preview
 		echo "$preview_text" >> $tmpfile_preview
 		printf '... ' >> $tmpfile_preview
