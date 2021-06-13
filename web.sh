@@ -1,5 +1,5 @@
 #!/bin/bash
-VERSION=0.2.4
+VERSION=0.2.5
 ROOT=$2
 TITLE=${0:2}
 CONTENT_DIR=${ROOT}/content
@@ -197,9 +197,8 @@ build_preview_page () {
 	>> "${BUILD_TARGET}" 
 	
 	previews=$(ls $PREVIEW_DIR)
-	echo $previews
-	for i in ${PREVIEW_DIR}/${previews}; do
-		cat "$i" >> "${BUILD_TARGET}"
+	for i in ${previews}; do
+		cat "${PREVIEW_DIR}/$i" >> "${BUILD_TARGET}"
 	done	
 	
 	printf '
@@ -243,12 +242,11 @@ build_blog_post () {
 		cat $i >> $tmpfile 
 
 		# cut out the first n words
-		preview_n=10
+		preview_n=5
 		preview_text=$(grep -v '##' $i | awk 'NF' | cut -d ' ' -f 1-${preview_n})
 
 		# grab title from first line
 		preview_title=$(head -n1 $i | sed 's/#//g')
-		echo $preview_title
 		printf "<div class="preview"><a href='%s'><h2>%s</h2></a></div>" "blog/${filename}.html" "${preview_title}" >> $tmpfile_preview
 		echo "$preview_text" >> $tmpfile_preview
 		printf '... ' >> $tmpfile_preview
