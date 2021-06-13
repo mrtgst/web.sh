@@ -1,7 +1,8 @@
 #!/bin/bash
-VERSION=0.1.30
+VERSION=0.1.31
 ROOT=$2
 CONTENT_DIR=${ROOT}/content
+BLOG_CONTENT_DIR=${ROOT}/content/blog
 BLOG_DIR=${ROOT}/blog
 CURRENT_YEAR=$(date +"%Y")
 CURRENT_DATE=$(date +"%Y-%m-%d")
@@ -15,9 +16,12 @@ get_size () {
 init () {
 	# initiate template files
 	if ! [ -d ${CONTENT_DIR} ]; then mkdir -p ${CONTENT_DIR}; fi
+	if ! [ -d ${BLOG_CONTENT_DIR} ]; then 
+		mkdir -p ${BLOG_CONTENT_DIR}
+    	printf "Here you can write the blog text. You can use *markdown* syntax to **typeset** your posts.\n\n### Subheaders are allowed\n If you want to use them." > ${BLOG_CONTENT_DIR}/${CURRENT_DATE}_Blog-Title.md
+	fi
 	if ! [ -d ${BLOG_DIR} ]; then 
 		mkdir -p ${BLOG_DIR}  
-    	printf "Some blog text." > ${BLOG_DIR}/${CURRENT_DATE}_Blog-Title.md
 	fi
 	if ! [ -e ${CONTENT_DIR}/home_text ]; then echo "Welcome to ${0}" > ${CONTENT_DIR}/home_text; fi
 	if ! [ -e ${CONTENT_DIR}/about_text ]; then echo "Something about ${0}" > ${CONTENT_DIR}/about_text; fi
@@ -146,7 +150,7 @@ build_page () {
 
 build_blog_post () {
 	local posts=$(ls $1)
-	local length=${#BLOG_DIR} 
+	local length=${#BLOG_CONTENT_DIR} 
 	length=$(( length + 2 )) 
 	for i in ${posts}; do
 		path=${i%.*} # remove .md
@@ -154,24 +158,37 @@ build_blog_post () {
 		title=$(echo "$path" | cut -c ${length}-) # keep only title
 		printf 'Building blog post \"%s\" ' "$title"
 		titlef=$(echo $title | cut -d $'_' -f2 | sed 's/-/\ /g') # replace dashes with space
+
+		# add post date
 		datef=$(echo $title | cut -d $'_' -f1 ) # replace dashes with space
 		datef=$(date -d ${datef} +'%B %d, %Y')
 		printf '<p><small>%s</small></p>\n' "${datef}" > $tmpfile
+
+		# make temporary file
 		cat $i >> $tmpfile 
+		# add post title 
 		sed -i "2s/^/## $titlef\n/" $tmpfile # add title on first line
-		# add dinkus and posted date
+
+		# add dinkus 
 		printf '<br><br><p><center><small><pre>* * *</pre></small></center></p>\n' "${datef}" >> $tmpfile
+
+		# add post text
 		pandoc $tmpfile --from markdown --to html --output $tmpfile.html
+
+		# build blog post page
 		build_blog_page $path.html $tmpfile.html '../'
+		mv $path.html ${BLOG_DIR}/$title.html
+
+		# remove temporary file
 		rm -f $tmpfile $tmpfile.html
 		printf '... Done\n'
 	done
 }
 
 build_blog_archive () {
-	> ${BLOG_DIR}/.archive
-	POSTS=$(ls -r ${BLOG_DIR}/*.md)
-	length=${#BLOG_DIR} 
+	> ${BLOG_CONTENT_DIR}/.archive
+	POSTS=$(ls -r ${BLOG_CONTENT_DIR}/*.md)
+	length=${#BLOG_CONTENT_DIR} 
 	length=$(( $length + 2))
 	for i in $POSTS; do
 	    j=${i%.*} # remove .md
@@ -185,7 +202,7 @@ build_blog_archive () {
 	    title=$(echo "$title" | sed 's/-/\ /g')
 	    #title=$(echo "$title" | sed 's/_/\ \&mdash;\ /g')
 	    # make hyperlink
-	    echo "<a href='blog/$k'>${datef} - $title</a><br>" >> ${BLOG_DIR}/.archive
+	    echo "<a href='blog/$k'>${datef} - $title</a><br>" >> ${BLOG_CONTENT_DIR}/.archive
 	done
 }
 
@@ -228,8 +245,8 @@ build () {
 	source_metadata
 	build_page index.html home_text
    	build_blog_archive
-   	build_blog_post "${BLOG_DIR}/*.md"
-	build_blog_page ${ROOT}/blog.html ${ROOT}/blog/.archive ''
+	build_blog_post "${BLOG_CONTENT_DIR}/*.md"
+	build_blog_page ${ROOT}/blog.html ${ROOT}/content/blog/.archive ''
 	get_size ${ROOT}
 	build_page about.html about_text 
 	get_size ${ROOT}
