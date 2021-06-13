@@ -1,5 +1,5 @@
 #!/bin/bash
-VERSION=0.2.5
+VERSION=0.2.6
 ROOT=$2
 TITLE=${0:2}
 CONTENT_DIR=${ROOT}/content
@@ -242,8 +242,8 @@ build_blog_post () {
 		cat $i >> $tmpfile 
 
 		# cut out the first n words
-		preview_n=5
-		preview_text=$(grep -v '##' $i | awk 'NF' | cut -d ' ' -f 1-${preview_n})
+		preview_n=50
+		preview_text=$(grep -v '##' $i | tr --delete '\n' | cut -d ' ' -f 1-${preview_n})
 
 		# grab title from first line
 		preview_title=$(head -n1 $i | sed 's/#//g')
