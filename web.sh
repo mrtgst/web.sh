@@ -8,6 +8,7 @@ BLOG_DIR=${ROOT}/blog
 CURRENT_YEAR=$(date +"%Y")
 CURRENT_DATE=$(date +"%Y-%m-%d")
 PREVIEW_DIR=${BLOG_CONTENT_DIR}/previews
+PREVIEW_N=30
 
 get_size () {
 	# gets size in kB
@@ -16,8 +17,8 @@ get_size () {
 }
 
 add_blog_post () {
-	local blog_title=$1
-	local blog_text=$2
+	local blog_title="$1"
+	local blog_text_file=$2
 	# format blog title
 	blog_titlef=$(echo ${blog_title} | tr A-Z a-z)
 	blog_titlef=$(echo $blog_titlef | sed 's/\ /-/g') # replace space with dash 
@@ -25,7 +26,7 @@ add_blog_post () {
 	blog_file=${BLOG_CONTENT_DIR}/$blog_titlef.md
 	touch "$blog_file"
 	printf "## $blog_title\n\n\n" > $blog_file
-	printf "$blog_text" >> $blog_file
+	cat "$blog_text_file" >> $blog_file
 }
 
 edit_blog_post () {
@@ -52,7 +53,9 @@ init () {
 		mkdir -p ${BLOG_CONTENT_DIR}
 		# add template blog post if no posts exist
 		if ! [ $(ls -A ${BLOG_CONTENT_DIR}) ]; then
-			add_blog_post "Blog title" "You can use *markdown* syntax to **typeset** your posts.\n\n### Subheaders are allowed\n If you want to use them." 
+			printf 'This is a template blog post. Remove this one and create your own under %s. Make sure they follow the same naming as the template blog post. The easiest way to add a new post is to use the command\n\n *web.sh blog %s 'New blog post title'*\n\nBy default, the first %s words are previewed on the start page.\n\nYou can use *markdown* syntax to **typeset** your posts.' ${BLOG_CONTENT_DIR} ${ROOT} ${PREVIEW_N} > ${BLOG_CONTENT_DIR}/template_blog_post.tmp
+			add_blog_post "Welcome to $TITLE" ${BLOG_CONTENT_DIR}/template_blog_post.tmp
+			rm -f ${BLOG_CONTENT_DIR}/template_blog_post.tmp
 		fi
 	fi
 	if ! [ -d ${BLOG_DIR} ]; then 
@@ -242,8 +245,8 @@ build_blog_post () {
 		cat $i >> $tmpfile 
 
 		# cut out the first n words
-		preview_n=5
-		preview_text=$(grep -v '##' $i | awk 'NF' | cut -d ' ' -f 1-${preview_n})
+		preview_text=$(grep -v '##' $i | cut -d ' ' -f 1-"${PREVIEW_N}")
+		echo $preview_text
 
 		# grab title from first line
 		preview_title=$(head -n1 $i | sed 's/#//g')
