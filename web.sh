@@ -1,5 +1,5 @@
 #!/bin/bash
-VERSION=0.1.31
+VERSION=0.1.32
 ROOT=$2
 CONTENT_DIR=${ROOT}/content
 BLOG_CONTENT_DIR=${ROOT}/content/blog
@@ -13,12 +13,42 @@ get_size () {
 	SIZE=$(( SIZE / 1000 ))
 }
 
+add_blog_post () {
+	local blog_title=$1
+	local blog_text=$2
+	# format blog title
+	blog_titlef=$(echo ${blog_title} | tr A-Z a-z)
+	blog_titlef=$(echo $blog_titlef | sed 's/\ /-/g') # replace space with dash 
+	blog_titlef=${CURRENT_DATE}_${blog_titlef}
+	blog_file=${BLOG_CONTENT_DIR}/$blog_titlef.md
+	touch "$blog_file"
+	printf "## $blog_title\n\n\n" > $blog_file
+	printf "$blog_text" >> $blog_file
+}
+
+edit_blog_post () {
+	#if [ -v $EDITOR ]; then 
+	#	echo "No default editor found, enter name of your editor: "
+	#	EDITOR=$(read)
+	#fi
+	local blog_title=$@
+	# format blog title
+	blog_titlef=$(echo ${blog_title} | tr A-Z a-z)
+	blog_titlef=$(echo $blog_titlef | sed 's/\ /-/g') # replace space with dash 
+	blog_titlef=${CURRENT_DATE}_${blog_titlef}
+	blog_file=${BLOG_CONTENT_DIR}/$blog_titlef.md
+	touch "$blog_file"
+	printf "## $blog_title\n\n\n" > $blog_file
+	#${EDITOR} $blog_file 
+	vim $blog_file 
+}
+
 init () {
 	# initiate template files
 	if ! [ -d ${CONTENT_DIR} ]; then mkdir -p ${CONTENT_DIR}; fi
 	if ! [ -d ${BLOG_CONTENT_DIR} ]; then 
 		mkdir -p ${BLOG_CONTENT_DIR}
-    	printf "Here you can write the blog text. You can use *markdown* syntax to **typeset** your posts.\n\n### Subheaders are allowed\n If you want to use them." > ${BLOG_CONTENT_DIR}/${CURRENT_DATE}_Blog-Title.md
+		add_blog_post "Blog title" "You can use *markdown* syntax to **typeset** your posts.\n\n### Subheaders are allowed\n If you want to use them." 
 	fi
 	if ! [ -d ${BLOG_DIR} ]; then 
 		mkdir -p ${BLOG_DIR}  
@@ -167,7 +197,7 @@ build_blog_post () {
 		# make temporary file
 		cat $i >> $tmpfile 
 		# add post title 
-		sed -i "2s/^/## $titlef\n/" $tmpfile # add title on first line
+		#sed -i "2s/^/## $titlef\n/" $tmpfile # add title on first line
 
 		# add dinkus 
 		printf '<br><br><p><center><small><pre>* * *</pre></small></center></p>\n' "${datef}" >> $tmpfile
@@ -198,9 +228,11 @@ build_blog_archive () {
 		datef=$(echo $j | cut -d '_' -f1)
 		datef=$(date -d ${datef} +'%b %d %Y')
 		# cut out title
-		title=$(echo $j | cut -d '_' -f2)
-	    title=$(echo "$title" | sed 's/-/\ /g')
+		#title=$(echo $j | cut -d '_' -f2)
+	    #title=$(echo "$title" | sed 's/-/\ /g')
 	    #title=$(echo "$title" | sed 's/_/\ \&mdash;\ /g')
+		# get title from first line in md file
+		title=$(head -n1 $i | sed 's/##//g' | sed 's/^\ //g')
 	    # make hyperlink
 	    echo "<a href='blog/$k'>${datef} - $title</a><br>" >> ${BLOG_CONTENT_DIR}/.archive
 	done
@@ -233,9 +265,11 @@ build_blog_page () {
 	" >> "${BUILD_TARGET}"
 }
 
+
 help () {
 	echo "web.sh $VERSION. Available commands:
-	build [destination]"
+	build [site root dir]
+	blog [site root dir] 'Blog title'"
 }
 
 build () {
@@ -257,6 +291,10 @@ build () {
 case $1 in
 	build)
 		build ${ROOT}
+		exit 1
+		;;
+	blog)
+		edit_blog_post $3
 		exit 1
 		;;
 	*)

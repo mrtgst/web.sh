@@ -1,3 +1,3 @@
 [x] Move blog post md files to content/blogposts; keep html files in blog/
-[ ] Render blog post title from header (use HTML comment in md file)
-[ ] Add command line function to add blog post: 'add blog "Title of blog post"'
+[x] Render blog post title from title in md file
+[x] Add command line function to add blog post: 'add blog "Title of blog post"'
