@@ -1,5 +1,5 @@
 #!/bin/bash
-VERSION=0.2.0
+VERSION=0.2.1
 ROOT=$2
 TITLE=${0:2}
 CONTENT_DIR=${ROOT}/content
@@ -193,29 +193,26 @@ build_blog_post () {
 	for i in ${posts}; do
 		path=${i%.*} # remove .md
 		tmpfile=$path.tmp
-		title=$(echo "$path" | cut -c ${length}-) # keep only title
-		printf 'Building blog post \"%s\" ' "$title"
-		titlef=$(echo $title | cut -d $'_' -f2 | sed 's/-/\ /g') # replace dashes with space
+		filename=$(echo "$path" | cut -c ${length}-) # keep only filename 
+		printf 'Building blog post \"%s\" ' "$filename"
 
 		# add post date
-		datef=$(echo $title | cut -d $'_' -f1 ) # replace dashes with space
+		datef=$(echo $filename | cut -d $'_' -f1 ) # replace dashes with space
 		datef=$(date -d ${datef} +'%B %d, %Y')
 		printf '<p><small>%s</small></p>\n' "${datef}" > $tmpfile
 
-		# make temporary file
+		# save text of post in a temporary file
 		cat $i >> $tmpfile 
-		# add post title 
-		#sed -i "2s/^/## $titlef\n/" $tmpfile # add title on first line
 
 		# add dinkus 
 		printf '<br><br><p><center><small><pre>* * *</pre></small></center></p>\n' "${datef}" >> $tmpfile
 
-		# add post text
+		# convert to html 
 		pandoc $tmpfile --from markdown --to html --output $tmpfile.html
 
 		# build blog post page
 		build_blog_page $path.html $tmpfile.html '../'
-		mv $path.html ${BLOG_DIR}/$title.html
+		mv $path.html ${BLOG_DIR}/$filename.html
 
 		# remove temporary file
 		rm -f $tmpfile $tmpfile.html
