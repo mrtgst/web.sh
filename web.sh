@@ -1,6 +1,7 @@
 #!/bin/bash
-VERSION=0.1.33
+VERSION=0.1.34
 ROOT=$2
+TITLE=${0:2}
 CONTENT_DIR=${ROOT}/content
 BLOG_CONTENT_DIR=${ROOT}/content/blog
 BLOG_DIR=${ROOT}/blog
@@ -56,8 +57,8 @@ init () {
 	if ! [ -d ${BLOG_DIR} ]; then 
 		mkdir -p ${BLOG_DIR}  
 	fi
-	if ! [ -e ${CONTENT_DIR}/home_text ]; then echo "Welcome to ${0}" > ${CONTENT_DIR}/home_text; fi
-	if ! [ -e ${CONTENT_DIR}/about_text ]; then echo "Something about ${0}" > ${CONTENT_DIR}/about_text; fi
+	if ! [ -e ${CONTENT_DIR}/home_text ]; then echo "Welcome to ${TITLE}" > ${CONTENT_DIR}/home_text; fi
+	if ! [ -e ${CONTENT_DIR}/about_text ]; then echo "Something about ${TITLE}" > ${CONTENT_DIR}/about_text; fi
 
 	# write to metadata file
 	if ! [ -e ${CONTENT_DIR}/metadata ]; then
@@ -66,7 +67,7 @@ init () {
 		TITLE=%s
 		FIGLET_TITLE_TEXT=%s
 		FIGLET_FONT='small'
-		" ${0} ${0} > ${CONTENT_DIR}/metadata
+		" ${TITLE} ${TITLE} > ${CONTENT_DIR}/metadata
 		echo "Wrote ${CONTENT_DIR}/metadata file"
 	fi
 
@@ -182,6 +183,7 @@ build_page () {
 }
 
 build_blog_post () {
+	rm -f ${BLOG_DIR}/*
 	local posts=$(ls $1)
 	local length=${#BLOG_CONTENT_DIR} 
 	length=$(( length + 2 )) 
