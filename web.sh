@@ -1,5 +1,5 @@
 #!/bin/bash
-VERSION=0.1.36
+VERSION=0.2.0
 ROOT=$2
 TITLE=${0:2}
 CONTENT_DIR=${ROOT}/content
