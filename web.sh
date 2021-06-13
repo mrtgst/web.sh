@@ -1,5 +1,5 @@
 #!/bin/bash
-VERSION=0.2.6
+VERSION=0.2.7
 ROOT=$2
 TITLE=${0:2}
 CONTENT_DIR=${ROOT}/content
@@ -196,7 +196,7 @@ build_preview_page () {
 	<div class="row">'\
 	>> "${BUILD_TARGET}" 
 	
-	previews=$(ls $PREVIEW_DIR)
+	previews=$(ls -r $PREVIEW_DIR)
 	for i in ${previews}; do
 		cat "${PREVIEW_DIR}/$i" >> "${BUILD_TARGET}"
 	done	
