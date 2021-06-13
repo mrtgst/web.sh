@@ -1,5 +1,5 @@
 #!/bin/bash
-VERSION=0.2.1
+VERSION=0.2.2
 ROOT=$2
 TITLE=${0:2}
 CONTENT_DIR=${ROOT}/content
@@ -7,6 +7,7 @@ BLOG_CONTENT_DIR=${ROOT}/content/blog
 BLOG_DIR=${ROOT}/blog
 CURRENT_YEAR=$(date +"%Y")
 CURRENT_DATE=$(date +"%Y-%m-%d")
+PREVIEW_DIR=${BLOG_CONTENT_DIR}/previews
 
 get_size () {
 	# gets size in kB
@@ -182,6 +183,39 @@ build_page () {
 
 }
 
+build_preview_page () {
+	TARGET_FILE=${1}
+	SOURCE_FILE=${2}
+	BUILD_TARGET=${ROOT}/${TARGET_FILE}
+	BUILD_SOURCE=${CONTENT_DIR}/${SOURCE_FILE}
+	
+	add_header ${BUILD_TARGET}
+	
+	printf '
+	<div class="column middle">
+	<div class="row">'\
+	>> "${BUILD_TARGET}" 
+	
+	previews=$(ls $PREVIEW_DIR)
+	echo $previews
+	for i in ${PREVIEW_DIR}/${previews}; do
+		cat "$i" >> "${BUILD_TARGET}"
+	done	
+	
+	printf '
+	</div>
+	</div>\n'\
+	>> "${BUILD_TARGET}"
+	
+	add_footer "${BUILD_TARGET}"
+	
+	printf "\
+	</body>
+	</html>\
+	" >> "${BUILD_TARGET}"
+
+}
+
 build_blog_post () {
 	# clear existing posts
 	printf "Clearing existing blog posts ... "
@@ -194,6 +228,8 @@ build_blog_post () {
 		path=${i%.*} # remove .md
 		tmpfile=$path.tmp
 		filename=$(echo "$path" | cut -c ${length}-) # keep only filename 
+		mkdir -p ${BLOG_CONTENT_DIR}/previews
+		tmpfile_preview=${BLOG_CONTENT_DIR}/previews/${filename}_preview
 		printf 'Building blog post \"%s\" ' "$filename"
 
 		# add post date
@@ -203,19 +239,27 @@ build_blog_post () {
 
 		# save text of post in a temporary file
 		cat $i >> $tmpfile 
+		#preview_text=$(grep -v '##' $i | awk 'NF' | head -c 300)
+		preview_text=$(grep -v '##' $i | awk 'NF' | cut -d ' ' -f 1-10)
+		preview_title=$(grep '##' $i | sed 's/#//g')
+		printf "<div class="preview"><a href='%s'><h2>%s</h2></a></div>" "blog/${filename}.html" "${preview_title}" >> $tmpfile_preview
+		echo "$preview_text" >> $tmpfile_preview
+		printf '... ' >> $tmpfile_preview
+		printf '<a href='%s'>Read more</a>' "blog/${filename}.html" >> $tmpfile_preview
 
 		# add dinkus 
 		printf '<br><br><p><center><small><pre>* * *</pre></small></center></p>\n' "${datef}" >> $tmpfile
 
 		# convert to html 
 		pandoc $tmpfile --from markdown --to html --output $tmpfile.html
-
+		pandoc $tmpfile_preview --from markdown --to html --output $tmpfile_preview.html
 		# build blog post page
 		build_blog_page $path.html $tmpfile.html '../'
 		mv $path.html ${BLOG_DIR}/$filename.html
 
-		# remove temporary file
+		# remove temporary files
 		rm -f $tmpfile $tmpfile.html
+		rm -f $tmpfile_preview
 		printf '... Done\n'
 	done
 }
@@ -282,10 +326,11 @@ build () {
 	echo "Building in directory ${root}"
 	init
 	source_metadata
-	build_page index.html home_text
+	#build_page index.html home_text
    	build_blog_archive
 	build_blog_post "${BLOG_CONTENT_DIR}/*.md"
 	build_blog_page ${ROOT}/blog.html ${ROOT}/content/blog/.archive ''
+	build_preview_page index.html ${PREVIEW_DIR} ''
 	get_size ${ROOT}
 	build_page about.html about_text 
 	get_size ${ROOT}
