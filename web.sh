@@ -1,5 +1,5 @@
 #!/bin/bash
-VERSION=0.2.7
+VERSION=0.2.8
 ROOT=$2
 TITLE=${0:2}
 CONTENT_DIR=${ROOT}/content
@@ -280,7 +280,7 @@ build_blog_archive () {
 	    k="$j.html"
 		# cut out and format date
 		datef=$(echo $j | cut -d '_' -f1)
-		datef=$(date -d ${datef} +'%b %d %Y')
+		datef=$(date -d ${datef} +'%b %d, %Y')
 		# cut out title
 		#title=$(echo $j | cut -d '_' -f2)
 	    #title=$(echo "$title" | sed 's/-/\ /g')
