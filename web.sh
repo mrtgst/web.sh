@@ -1,5 +1,5 @@
 #!/bin/bash
-VERSION=0.2.8
+VERSION=0.2.9
 ROOT=$2
 TITLE=${0:2}
 CONTENT_DIR=${ROOT}/content
@@ -256,8 +256,9 @@ build_blog_post () {
 		printf '<br><br><p><center><small><pre>* * *</pre></small></center></p>\n' "${datef}" >> $tmpfile
 
 		# convert to html 
-		pandoc $tmpfile --from markdown --to html --output $tmpfile.html
-		pandoc $tmpfile_preview --from markdown --to html --output $tmpfile_preview.html
+		cmark --smart --to html $i > $tmpfile.html
+		cmark --smart --to html $i > $tmpfile_preview.html
+
 		# build blog post page
 		build_blog_page $path.html $tmpfile.html '../'
 		mv $path.html ${BLOG_DIR}/$filename.html
