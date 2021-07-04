@@ -1,5 +1,5 @@
 #!/bin/bash
-VERSION=0.2.10
+VERSION=0.2.11
 ROOT=$2
 TITLE=${0:2}
 CONTENT_DIR=${ROOT}/content
@@ -235,8 +235,8 @@ build_blog_post () {
 
 
 		# cut out the first n words
-		preview_n=50
-		preview_text=$(grep -v '##' $i | tr --delete '\n' | cut -d ' ' -f 1-${preview_n})
+		#preview_n=50
+		#preview_text=$(grep -v '##' $i | tr --delete '\n' | cut -d ' ' -f 1-${preview_n})
 
 		# grab title from first line
 		preview_title=$(head -n1 $i | sed 's/#//g')
@@ -253,9 +253,11 @@ build_blog_post () {
 		datef=$(echo $filename | cut -d $'_' -f1 ) # replace dashes with space
 		datef=$(date -d ${datef} +'%B %d, %Y')
 		sed -i "1i ${datef}" $tmpfile.html
+		sed -i "1i ${datef}" $tmpfile_preview.html
 
 		# add dinkus to bottom of blog post
 		printf '<p><center>&#8258;</center></p>\n' "${datef}" >> $tmpfile.html
+		printf '<br><p><center>&#8258;</center></p><br><br>\n' "${datef}" >> $tmpfile_preview.html
 
 		# build blog post page
 		build_blog_page $path.html $tmpfile.html '../'
