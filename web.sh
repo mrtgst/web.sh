@@ -1,5 +1,5 @@
 #!/bin/bash
-VERSION=0.2.9
+VERSION=0.2.10
 ROOT=$2
 TITLE=${0:2}
 CONTENT_DIR=${ROOT}/content
@@ -233,13 +233,6 @@ build_blog_post () {
 		tmpfile_preview=${BLOG_CONTENT_DIR}/previews/${filename}_preview
 		printf 'Building blog post \"%s\" ' "$filename"
 
-		# add post date
-		datef=$(echo $filename | cut -d $'_' -f1 ) # replace dashes with space
-		datef=$(date -d ${datef} +'%B %d, %Y')
-		printf '<p><small>%s</small></p>\n' "${datef}" > $tmpfile
-
-		# save text of post in a temporary file
-		cat $i >> $tmpfile 
 
 		# cut out the first n words
 		preview_n=50
@@ -252,12 +245,17 @@ build_blog_post () {
 		printf '... ' >> $tmpfile_preview
 		printf '<a href='%s'>Read more</a>' "blog/${filename}.html" >> $tmpfile_preview
 
-		# add dinkus 
-		printf '<br><br><p><center><small><pre>* * *</pre></small></center></p>\n' "${datef}" >> $tmpfile
-
 		# convert to html 
 		cmark --smart --to html $i > $tmpfile.html
 		cmark --smart --to html $i > $tmpfile_preview.html
+
+		# add post date to top of blog post
+		datef=$(echo $filename | cut -d $'_' -f1 ) # replace dashes with space
+		datef=$(date -d ${datef} +'%B %d, %Y')
+		sed -i "1i ${datef}" $tmpfile.html
+
+		# add dinkus to bottom of blog post
+		printf '<p><center>&#8258;</center></p>\n' "${datef}" >> $tmpfile.html
 
 		# build blog post page
 		build_blog_page $path.html $tmpfile.html '../'
