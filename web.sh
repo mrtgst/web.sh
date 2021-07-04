@@ -270,23 +270,24 @@ build_blog_post () {
 }
 
 build_blog_archive () {
+	# makes a file .archive with a list of all blog posts as hrefs
 	> ${BLOG_CONTENT_DIR}/.archive
 	POSTS=$(ls -r ${BLOG_CONTENT_DIR}/*.md)
 	length=${#BLOG_CONTENT_DIR} 
 	length=$(( $length + 2))
+
 	for i in $POSTS; do
 	    j=${i%.*} # remove .md
 	    j=$(echo "$j" | cut -c ${length}-)
 	    k="$j.html"
+
 		# cut out and format date
 		datef=$(echo $j | cut -d '_' -f1)
 		datef=$(date -d ${datef} +'%b %d, %Y')
-		# cut out title
-		#title=$(echo $j | cut -d '_' -f2)
-	    #title=$(echo "$title" | sed 's/-/\ /g')
-	    #title=$(echo "$title" | sed 's/_/\ \&mdash;\ /g')
+
 		# get title from first line in md file
 		title=$(head -n1 $i | sed 's/##//g' | sed 's/^\ //g')
+
 	    # make hyperlink
 	    echo "<a href='blog/$k'>${datef} - $title</a><br>" >> ${BLOG_CONTENT_DIR}/.archive
 	done
