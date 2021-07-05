@@ -1,13 +1,3 @@
-.serif {
-  font-family: "Times New Roman", Times, serif;
-}
-.sansserif {
-  font-family: Arial, Helvetica, sans-serif;
-}
-.monospace {
-  font-family: "Consolas", "Roboto Mono", "Ubuntu Mono", monospace;
-}
-
 body {
   margin: 0;
   background-color: white;
@@ -18,7 +8,17 @@ body {
 
 pre {
   font-family: monospace;
-  font-size: 1em;
+  background-color: whitesmoke;
+  border: 6px solid whitesmoke;
+  border-radius: 6px;
+}
+
+code {
+  font-family: monospace;
+  background-color: whitesmoke;
+  border: 6px solid whitesmoke;
+  display: inline-block;
+  border-radius: 6px;
 }
 
 a {
@@ -30,23 +30,29 @@ a:visited {
   text-decoration: none;
   color: teal;
 }
+
 a:hover {
   background-color: teal; 
   color: #ffffff;
 }
 
-.preview a {
-  text-decoration: none;
+.banner {
+  white-space: pre;
+  font-family: monospace;
+  background-color: none;
+}
+
+.banner a {
   color: black;
 }
 
-.preview a:visited {
-  text-decoration: none;
+.banner a:visited {
   color: black;
 }
 
-.preview a:hover {
+.banner a:hover {
   color: teal;
+  background-color: white;
 }
 
 header {
@@ -59,8 +65,6 @@ header {
 
 footer {
   text-align: center;
-  /* background: #f1f1f1; */
-  /* margin-top: 300px; */
   font-size: 0.8em;
   font-family: monospace;
   color: rgb(155, 155, 155);
@@ -79,15 +83,7 @@ footer {
 
 .footer a:hover {
   background-color: teal; 
-  color: #ffffff;
-}
-
-.banner a {
-  color: black;
-}
-
-.banner a:hover {
-  color: black;
+  color: white;
 }
 
 .navbar {
@@ -106,7 +102,7 @@ footer {
 }
 
 .navbar a:hover {
-  color: #ffffff;	
+  color: white;	
 }
 
 .navbar li {

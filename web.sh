@@ -1,5 +1,5 @@
 #!/bin/bash
-VERSION=0.2.5
+VERSION=0.2.13
 ROOT=$2
 TITLE=${0:2}
 CONTENT_DIR=${ROOT}/content
@@ -8,7 +8,6 @@ BLOG_DIR=${ROOT}/blog
 CURRENT_YEAR=$(date +"%Y")
 CURRENT_DATE=$(date +"%Y-%m-%d")
 PREVIEW_DIR=${BLOG_CONTENT_DIR}/previews
-PREVIEW_N=30
 
 get_size () {
 	# gets size in kB
@@ -17,8 +16,8 @@ get_size () {
 }
 
 add_blog_post () {
-	local blog_title="$1"
-	local blog_text_file=$2
+	local blog_title=$1
+	local blog_text=$2
 	# format blog title
 	blog_titlef=$(echo ${blog_title} | tr A-Z a-z)
 	blog_titlef=$(echo $blog_titlef | sed 's/\ /-/g') # replace space with dash 
@@ -26,7 +25,7 @@ add_blog_post () {
 	blog_file=${BLOG_CONTENT_DIR}/$blog_titlef.md
 	touch "$blog_file"
 	printf "## $blog_title\n\n\n" > $blog_file
-	cat "$blog_text_file" >> $blog_file
+	printf "$blog_text" >> $blog_file
 }
 
 edit_blog_post () {
@@ -53,9 +52,7 @@ init () {
 		mkdir -p ${BLOG_CONTENT_DIR}
 		# add template blog post if no posts exist
 		if ! [ $(ls -A ${BLOG_CONTENT_DIR}) ]; then
-			printf 'This is a template blog post. Remove this one and create your own under %s. Make sure they follow the same naming as the template blog post. The easiest way to add a new post is to use the command\n\n *web.sh blog %s 'New blog post title'*\n\nBy default, the first %s words are previewed on the start page.\n\nYou can use *markdown* syntax to **typeset** your posts.' ${BLOG_CONTENT_DIR} ${ROOT} ${PREVIEW_N} > ${BLOG_CONTENT_DIR}/template_blog_post.tmp
-			add_blog_post "Welcome to $TITLE" ${BLOG_CONTENT_DIR}/template_blog_post.tmp
-			rm -f ${BLOG_CONTENT_DIR}/template_blog_post.tmp
+			add_blog_post "Blog title" "You can use *markdown* syntax to **typeset** your posts.\n\n### Subheaders are allowed\n If you want to use them." 
 		fi
 	fi
 	if ! [ -d ${BLOG_DIR} ]; then 
@@ -86,9 +83,7 @@ source_metadata () {
 
 
 add_figlet () {
-	printf "<pre>\n" >> "$1"
 	figlet -f small -w 1080 "${FIGLET_TITLE_TEXT}" >> "$1"
-	printf '</pre>\n' >> $1
 }
 
 
@@ -199,7 +194,7 @@ build_preview_page () {
 	<div class="row">'\
 	>> "${BUILD_TARGET}" 
 	
-	previews=$(ls $PREVIEW_DIR)
+	previews=$(ls -r $PREVIEW_DIR)
 	for i in ${previews}; do
 		cat "${PREVIEW_DIR}/$i" >> "${BUILD_TARGET}"
 	done	
@@ -236,31 +231,31 @@ build_blog_post () {
 		tmpfile_preview=${BLOG_CONTENT_DIR}/previews/${filename}_preview
 		printf 'Building blog post \"%s\" ' "$filename"
 
-		# add post date
-		datef=$(echo $filename | cut -d $'_' -f1 ) # replace dashes with space
-		datef=$(date -d ${datef} +'%B %d, %Y')
-		printf '<p><small>%s</small></p>\n' "${datef}" > $tmpfile
-
-		# save text of post in a temporary file
-		cat $i >> $tmpfile 
 
 		# cut out the first n words
-		preview_text=$(grep -v '##' $i | cut -d ' ' -f 1-"${PREVIEW_N}")
-		echo $preview_text
+		#preview_n=50
+		#preview_text=$(grep -v '##' $i | tr --delete '\n' | cut -d ' ' -f 1-${preview_n})
 
-		# grab title from first line
-		preview_title=$(head -n1 $i | sed 's/#//g')
-		printf "<div class="preview"><a href='%s'><h2>%s</h2></a></div>" "blog/${filename}.html" "${preview_title}" >> $tmpfile_preview
-		echo "$preview_text" >> $tmpfile_preview
-		printf '... ' >> $tmpfile_preview
-		printf '<a href='%s'>Read more</a>' "blog/${filename}.html" >> $tmpfile_preview
-
-		# add dinkus 
-		printf '<br><br><p><center><small><pre>* * *</pre></small></center></p>\n' "${datef}" >> $tmpfile
 
 		# convert to html 
-		pandoc $tmpfile --from markdown --to html --output $tmpfile.html
-		pandoc $tmpfile_preview --from markdown --to html --output $tmpfile_preview.html
+		cmark --smart --to html $i > $tmpfile.html
+		cmark --smart --to html $i > $tmpfile_preview.html
+
+		# add post date to top of blog post
+		datef=$(echo $filename | cut -d $'_' -f1 ) # replace dashes with space
+		datef=$(date -d ${datef} +'%B %d, %Y')
+		sed -i "1i ${datef}" $tmpfile.html
+		sed -i "1i ${datef}" $tmpfile_preview.html
+
+		# add dinkus to bottom of blog post
+		printf '<p><center>&#8258;</center></p>\n' "${datef}" >> $tmpfile.html
+		printf '<br><p><center>&#8258;</center></p><br><br>\n' "${datef}" >> $tmpfile_preview.html
+
+		## make title link in preview
+		#preview_title=$(head -n1 $i | sed 's/#//g') # grab title from first line
+		#printf "<div class="preview"><a href='%s'><h2>%s</h2></a></div>" "blog/${filename}.html" "${preview_title}" >> $tmpfile_preview.html
+		##printf '... ' >> $tmpfile_preview
+		##printf '<a href='%s'>Read more</a>' "blog/${filename}.html" >> $tmpfile_preview
 		# build blog post page
 		build_blog_page $path.html $tmpfile.html '../'
 		mv $path.html ${BLOG_DIR}/$filename.html
@@ -273,23 +268,24 @@ build_blog_post () {
 }
 
 build_blog_archive () {
+	# makes a file .archive with a list of all blog posts as hrefs
 	> ${BLOG_CONTENT_DIR}/.archive
 	POSTS=$(ls -r ${BLOG_CONTENT_DIR}/*.md)
 	length=${#BLOG_CONTENT_DIR} 
 	length=$(( $length + 2))
+
 	for i in $POSTS; do
 	    j=${i%.*} # remove .md
 	    j=$(echo "$j" | cut -c ${length}-)
 	    k="$j.html"
+
 		# cut out and format date
 		datef=$(echo $j | cut -d '_' -f1)
-		datef=$(date -d ${datef} +'%b %d %Y')
-		# cut out title
-		#title=$(echo $j | cut -d '_' -f2)
-	    #title=$(echo "$title" | sed 's/-/\ /g')
-	    #title=$(echo "$title" | sed 's/_/\ \&mdash;\ /g')
+		datef=$(date -d ${datef} +'%b %d, %Y')
+
 		# get title from first line in md file
 		title=$(head -n1 $i | sed 's/##//g' | sed 's/^\ //g')
+
 	    # make hyperlink
 	    echo "<a href='blog/$k'>${datef} - $title</a><br>" >> ${BLOG_CONTENT_DIR}/.archive
 	done
