@@ -1,5 +1,5 @@
 #!/bin/bash
-VERSION=0.2.13
+VERSION=0.2.14
 ROOT=$2
 TITLE=${0:2}
 CONTENT_DIR=${ROOT}/content
@@ -236,6 +236,16 @@ build_blog_post () {
 		#preview_n=50
 		#preview_text=$(grep -v '##' $i | tr --delete '\n' | cut -d ' ' -f 1-${preview_n})
 
+		# convert to html 
+		cmark --smart --to html $i > $tmpfile.html
+		cmark --smart --to html $i > $tmpfile_preview.html
+
+		# grab title from first line
+		preview_title=$(head -n1 $i | sed 's/#//g')
+		printf "<div class="preview"><a href='%s'><h2>%s</h2></a></div>" "blog/${filename}.html" "${preview_title}" >> $tmpfile_preview
+		echo "$preview_text" >> $tmpfile_preview
+		printf '... ' >> $tmpfile_preview
+		printf '<a href='%s'>Read more</a>' "blog/${filename}.html" >> $tmpfile_preview
 
 		# convert to html 
 		cmark --smart --to html $i > $tmpfile.html
