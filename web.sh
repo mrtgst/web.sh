@@ -1,5 +1,5 @@
 #!/bin/bash
-VERSION=0.2.14
+VERSION=0.2.15
 ROOT=$2
 TITLE=${0:2}
 CONTENT_DIR=${ROOT}/content
@@ -194,12 +194,29 @@ build_preview_page () {
 	<div class="row">'\
 	>> "${BUILD_TARGET}" 
 	
+	# make array of all blog post file names
+	declare -a previews_array	
+	readarray -t previews_array < <(ls -r $PREVIEW_DIR)
 	previews=$(ls -r $PREVIEW_DIR)
-	for i in ${previews}; do
-		cat "${PREVIEW_DIR}/$i" >> "${BUILD_TARGET}"
-	done	
-	
+		
+	# set number of posts to show on preview page
+	i=0
+	n_post=${#previews_array[@]}
+	if [ $n_post -lt 5 ]; then
+		n=$n_post
+	else
+		n=5
+	fi
+
+	# add blog post texts to preview page
+	while [ $i -lt $n ]; do
+		cat "${PREVIEW_DIR}/${previews_array[$i]}" >> "${BUILD_TARGET}"
+		((i++))
+	done
+
+	# add blog archive link at bottom of preview page
 	printf '
+	<center><a href='./blog.html'>Blog archive</a></center>
 	</div>
 	</div>\n'\
 	>> "${BUILD_TARGET}"
