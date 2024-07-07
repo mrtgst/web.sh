@@ -1,5 +1,5 @@
 #!/bin/bash
-VERSION=0.2.15
+VERSION=0.2.16
 ROOT=$2
 TITLE=${0:2}
 CONTENT_DIR=${ROOT}/content
@@ -107,7 +107,7 @@ add_footer () {
 	<div class=row>
 	<div class=footer>
 		&copy; %s<br>
-		Built with <a href='https://github.com/mrtgst/web.sh'>web.sh %s</a><br>
+		Built with web.sh %s<br>
 		No scripts, no cookies
 	</div>
 	</div>
